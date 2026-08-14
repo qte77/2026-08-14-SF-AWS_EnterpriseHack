@@ -1,0 +1,13 @@
+```
+SandboxLogPage
+├── ThemeToggle
+├── Breadcrumbs
+├── PageTitle
+└── ExecutionCardList
+    └── ExecutionCard × n
+        ├── CardHeader (governance badge, title, status)
+        └── CardBody (expandable)
+            ├── LifecycleStepper (Created → Executed → Destroyed)
+            ├── DetailGrid (sandbox ID, timestamps, limits)
+            └── RetryHistory (table, for failed executions)
+```

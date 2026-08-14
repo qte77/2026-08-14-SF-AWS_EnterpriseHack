@@ -1,0 +1,35 @@
+```
+DesignSystem
+├── ThemeToggle
+├── Header
+├── Section: Colour Palette
+│   ├── ColorSwatchGrid (Brand)
+│   ├── ColorSwatchGrid (Backgrounds)
+│   ├── ColorSwatchGrid (Text)
+│   └── ColorSwatchGrid (Semantic)
+├── Section: Typography
+│   └── TypeRow × 8
+├── Section: Buttons
+│   ├── ButtonRow (Variants)
+│   └── ButtonRow (Sizes)
+├── Section: Form Inputs
+│   ├── TextInput (default, error, disabled)
+│   ├── Select
+│   ├── Textarea
+│   ├── CheckboxGroup
+│   └── Toggle
+├── Section: Badges & Tags
+├── Section: Data Table
+├── Section: Alerts & Toasts
+├── Section: Navigation
+│   ├── Tabs
+│   └── Breadcrumbs
+├── Section: Accordion
+├── Section: Modal Dialog
+├── Section: Dropdown Menu
+├── Section: Avatars & Tooltips
+├── Section: Spacing Scale
+├── Section: Shadows
+├── Section: Loading States (Skeleton)
+└── Section: Border Radius
+```

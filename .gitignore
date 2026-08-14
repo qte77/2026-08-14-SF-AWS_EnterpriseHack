@@ -27,3 +27,6 @@ build/
 # OS / editor
 .DS_Store
 *.swp
+
+# Local ledger (rebuilt on each run)
+ledgerline.db

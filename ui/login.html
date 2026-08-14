@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledgerline — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--color-primary:#0f62fe;--color-primary-hover:#0353e9;--color-bg:#ffffff;--color-surface:#f4f4f4;--color-surface-raised:#ffffff;--color-text-primary:#161616;--color-text-secondary:#525252;--color-text-muted:#8d8d8d;--color-text-inverse:#ffffff;--color-border:#e0e0e0;--color-border-strong:#8d8d8d;--color-error:#da1e28;--color-error-bg:#fff1f1;--color-focus:#0f62fe;--color-info:#0043ce;--color-info-bg:#edf5ff;--font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono',Consolas,monospace;--font-size-xs:0.75rem;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-xl:1.25rem;--font-size-2xl:1.5rem;--font-size-3xl:2rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-5:20px;--spacing-6:24px;--spacing-8:32px;--spacing-10:40px;--spacing-12:48px;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 2px 6px rgba(0,0,0,0.08);--shadow-lg:0 4px 12px rgba(0,0,0,0.12);--radius-sm:2px;--radius-md:4px;--radius-lg:8px;--radius-full:9999px;--transition-fast:120ms ease;--transition-normal:200ms ease;}
+[data-theme="dark"]{--color-primary:#78a9ff;--color-primary-hover:#a6c8ff;--color-bg:#161616;--color-surface:#262626;--color-surface-raised:#393939;--color-text-primary:#f4f4f4;--color-text-secondary:#c6c6c6;--color-text-muted:#6f6f6f;--color-text-inverse:#161616;--color-border:#393939;--color-border-strong:#6f6f6f;--color-error:#fa4d56;--color-error-bg:#470b0e;--color-focus:#78a9ff;--color-info:#4589ff;--color-info-bg:#001d6c;--shadow-sm:0 1px 2px rgba(0,0,0,0.3);--shadow-md:0 2px 6px rgba(0,0,0,0.4);--shadow-lg:0 4px 12px rgba(0,0,0,0.5);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--color-text-primary);background:var(--color-surface);min-height:100vh;display:flex;align-items:center;justify-content:center;transition:background var(--transition-normal);}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-raised);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all var(--transition-fast);box-shadow:var(--shadow-sm);}
+.theme-toggle:hover{background:var(--color-border);}
+.login-wrapper{display:flex;flex-direction:column;align-items:center;width:100%;max-width:420px;padding:var(--spacing-6);}
+.login-logo{display:flex;align-items:center;gap:var(--spacing-3);margin-bottom:var(--spacing-10);}
+.login-logo-icon{width:40px;height:40px;background:var(--color-primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;color:var(--color-text-inverse);font-weight:var(--font-weight-bold);font-size:var(--font-size-xl);}
+.login-logo-text{font-size:var(--font-size-2xl);font-weight:var(--font-weight-bold);}
+.login-card{width:100%;background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--spacing-8);box-shadow:var(--shadow-lg);}
+.login-title{font-size:var(--font-size-xl);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-1);}
+.login-subtitle{font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--spacing-6);}
+.form-group{margin-bottom:var(--spacing-4);}
+.form-label{display:block;font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);margin-bottom:var(--spacing-1);color:var(--color-text-secondary);}
+.form-input{width:100%;padding:var(--spacing-2) var(--spacing-3);font-family:var(--font-family);font-size:var(--font-size-sm);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);transition:border-color var(--transition-fast);min-height:40px;}
+.form-input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 1px var(--color-focus);}
+.form-input.error{border-color:var(--color-error);}
+.form-error-msg{font-size:var(--font-size-xs);color:var(--color-error);margin-top:var(--spacing-1);display:none;}
+.form-error-msg.visible{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-2);width:100%;padding:var(--spacing-3) var(--spacing-4);font-family:var(--font-family);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);border:none;border-radius:var(--radius-md);cursor:pointer;transition:all var(--transition-fast);min-height:44px;}
+.btn:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px;}
+.btn-primary{background:var(--color-primary);color:var(--color-text-inverse);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-loading{position:relative;color:transparent !important;pointer-events:none;}
+.btn-loading::after{content:'';position:absolute;width:18px;height:18px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alert{display:flex;align-items:flex-start;gap:var(--spacing-2);padding:var(--spacing-3) var(--spacing-4);border-radius:var(--radius-md);font-size:var(--font-size-sm);margin-bottom:var(--spacing-4);border-left:3px solid;display:none;}
+.alert.visible{display:flex;}
+.alert-error{background:var(--color-error-bg);border-color:var(--color-error);}
+.alert-info{background:var(--color-info-bg);border-color:var(--color-info);}
+.login-footer{margin-top:var(--spacing-6);font-size:var(--font-size-xs);color:var(--color-text-muted);text-align:center;}
+.mfa-section{display:none;}
+.mfa-section.visible{display:block;}
+.login-section.hidden{display:none;}
+.mfa-inputs{display:flex;gap:var(--spacing-2);justify-content:center;margin:var(--spacing-6) 0;}
+.mfa-input{width:44px;height:52px;text-align:center;font-size:var(--font-size-xl);font-family:var(--font-mono);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);}
+.mfa-input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 1px var(--color-focus);}
+.lockout-banner{background:var(--color-error-bg);border:1px solid var(--color-error);border-radius:var(--radius-md);padding:var(--spacing-4);margin-bottom:var(--spacing-4);font-size:var(--font-size-sm);color:var(--color-error);text-align:center;display:none;}
+.lockout-banner.visible{display:block;}
+@media(max-width:480px){.login-wrapper{padding:var(--spacing-4);}.login-card{padding:var(--spacing-6);}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
+
+<div class="login-wrapper">
+  <div class="login-logo">
+    <div class="login-logo-icon">L</div>
+    <div class="login-logo-text">Ledgerline</div>
+  </div>
+
+  <div class="login-card">
+    <!-- Login Section -->
+    <div class="login-section" id="loginSection">
+      <div class="login-title">Sign in</div>
+      <div class="login-subtitle">Enter your credentials to access the workflow agent</div>
+
+      <div class="lockout-banner" id="lockoutBanner">Account locked due to 5 failed attempts. Try again in 15 minutes.</div>
+
+      <div class="alert alert-error" id="loginError"><span>✕</span> <span id="loginErrorMsg">Invalid email or password.</span></div>
+      <div class="alert alert-info" id="sessionAlert"><span>ℹ</span> <span>Your session has expired. Please sign in again.</span></div>
+
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-input" id="email" type="email" placeholder="name@company.com" autocomplete="email" required>
+          <div class="form-error-msg" id="emailError">Please enter a valid email address.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-input" id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <div class="form-error-msg" id="passwordError">Password is required.</div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="loginBtn">Sign in</button>
+      </form>
+    </div>
+
+    <!-- MFA Section -->
+    <div class="mfa-section" id="mfaSection">
+      <div class="login-title">Two-factor authentication</div>
+      <div class="login-subtitle">Enter the 6-digit code from your authenticator app</div>
+
+      <div class="alert alert-error" id="mfaError"><span>✕</span> <span>Invalid code. Please try again.</span></div>
+
+      <div class="mfa-inputs" id="mfaInputs">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 1">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 2">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 3">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 4">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 5">
+        <input class="mfa-input" type="text" maxlength="1" inputmode="numeric" aria-label="Digit 6">
+      </div>
+
+      <button class="btn btn-primary" id="mfaVerifyBtn">Verify</button>
+      <div style="text-align:center;margin-top:var(--spacing-4)"><a href="#" style="font-size:var(--font-size-sm);color:var(--color-primary);text-decoration:none" id="useBackupLink">Use a backup code instead</a></div>
+    </div>
+  </div>
+
+  <div class="login-footer">Ledgerline v1.0 — SOC 2 & GDPR Compliant<br>© 2026 Ledgerline. All rights reserved.</div>
+</div>
+
+<script>
+(function(){
+  var isDark = false;
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    isDark = !isDark;
+    if(isDark){ document.documentElement.setAttribute('data-theme','dark'); this.textContent='🌙'; }
+    else { document.documentElement.removeAttribute('data-theme'); this.textContent='☀'; }
+  });
+
+  var loginForm = document.getElementById('loginForm');
+  var loginBtn = document.getElementById('loginBtn');
+  var emailInput = document.getElementById('email');
+  var passwordInput = document.getElementById('password');
+  var emailError = document.getElementById('emailError');
+  var passwordError = document.getElementById('passwordError');
+  var loginError = document.getElementById('loginError');
+  var loginSection = document.getElementById('loginSection');
+  var mfaSection = document.getElementById('mfaSection');
+  var mfaInputs = document.querySelectorAll('.mfa-input');
+  var mfaVerifyBtn = document.getElementById('mfaVerifyBtn');
+  var mfaError = document.getElementById('mfaError');
+
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    var valid = true;
+    emailError.classList.remove('visible');
+    passwordError.classList.remove('visible');
+    loginError.classList.remove('visible');
+
+    if(!emailInput.value || !/\S+@\S+/.test(emailInput.value)){
+      emailError.classList.add('visible');
+      emailInput.classList.add('error');
+      valid = false;
+    } else { emailInput.classList.remove('error'); }
+
+    if(!passwordInput.value){
+      passwordError.classList.add('visible');
+      passwordInput.classList.add('error');
+      valid = false;
+    } else { passwordInput.classList.remove('error'); }
+
+    if(!valid) return;
+
+    loginBtn.classList.add('btn-loading');
+    loginBtn.disabled = true;
+    setTimeout(function(){
+      loginBtn.classList.remove('btn-loading');
+      loginBtn.disabled = false;
+      loginSection.classList.add('hidden');
+      mfaSection.classList.add('visible');
+      mfaInputs[0].focus();
+    }, 1500);
+  });
+
+  // MFA auto-advance
+  mfaInputs.forEach(function(inp, idx){
+    inp.addEventListener('input', function(){
+      if(inp.value.length === 1 && idx < mfaInputs.length - 1){
+        mfaInputs[idx + 1].focus();
+      }
+    });
+    inp.addEventListener('keydown', function(e){
+      if(e.key === 'Backspace' && !inp.value && idx > 0){
+        mfaInputs[idx - 1].focus();
+      }
+    });
+  });
+
+  mfaVerifyBtn.addEventListener('click', function(){
+    var code = '';
+    mfaInputs.forEach(function(i){ code += i.value; });
+    if(code.length < 6){
+      mfaError.classList.add('visible');
+      return;
+    }
+    mfaError.classList.remove('visible');
+    mfaVerifyBtn.classList.add('btn-loading');
+    mfaVerifyBtn.disabled = true;
+    setTimeout(function(){
+      mfaVerifyBtn.classList.remove('btn-loading');
+      mfaVerifyBtn.disabled = false;
+      alert('Authentication successful! Redirecting to Dashboard…');
+    }, 1200);
+  });
+
+  document.getElementById('useBackupLink').addEventListener('click', function(e){
+    e.preventDefault();
+    alert('Backup code entry flow would appear here.');
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledgerline — Work Order Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--color-primary:#0f62fe;--color-primary-hover:#0353e9;--color-bg:#ffffff;--color-surface:#f4f4f4;--color-surface-hover:#e8e8e8;--color-surface-raised:#ffffff;--color-text-primary:#161616;--color-text-secondary:#525252;--color-text-muted:#8d8d8d;--color-text-inverse:#ffffff;--color-border:#e0e0e0;--color-border-strong:#8d8d8d;--color-success:#198038;--color-success-bg:#defbe6;--color-warning:#b28600;--color-warning-bg:#fdf6dd;--color-error:#da1e28;--color-error-bg:#fff1f1;--color-info:#0043ce;--color-info-bg:#edf5ff;--color-focus:#0f62fe;--font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono',Consolas,monospace;--font-size-xs:0.75rem;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-xl:1.25rem;--font-size-2xl:1.5rem;--font-size-3xl:2rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-5:20px;--spacing-6:24px;--spacing-8:32px;--spacing-12:48px;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 2px 6px rgba(0,0,0,0.08);--shadow-lg:0 4px 12px rgba(0,0,0,0.12);--shadow-xl:0 8px 24px rgba(0,0,0,0.16);--radius-sm:2px;--radius-md:4px;--radius-lg:8px;--radius-full:9999px;--transition-fast:120ms ease;--transition-normal:200ms ease;}
+[data-theme="dark"]{--color-primary:#78a9ff;--color-primary-hover:#a6c8ff;--color-bg:#161616;--color-surface:#262626;--color-surface-hover:#353535;--color-surface-raised:#393939;--color-text-primary:#f4f4f4;--color-text-secondary:#c6c6c6;--color-text-muted:#6f6f6f;--color-text-inverse:#161616;--color-border:#393939;--color-border-strong:#6f6f6f;--color-success:#42be65;--color-success-bg:#044317;--color-warning:#f1c21b;--color-warning-bg:#3a2f00;--color-error:#fa4d56;--color-error-bg:#470b0e;--color-info:#4589ff;--color-info-bg:#001d6c;--color-focus:#78a9ff;--shadow-lg:0 4px 12px rgba(0,0,0,0.5);--shadow-xl:0 8px 24px rgba(0,0,0,0.6);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--color-text-primary);background:var(--color-bg);transition:background var(--transition-normal);}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-raised);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-sm);}
+.theme-toggle:hover{background:var(--color-surface-hover);}
+.page-container{max-width:1100px;margin:0 auto;padding:var(--spacing-6) var(--spacing-8);}
+@media(max-width:768px){.page-container{padding:var(--spacing-4);}}
+
+/* Breadcrumbs */
+.breadcrumbs{display:flex;align-items:center;gap:var(--spacing-1);font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--spacing-4);}
+.breadcrumbs a{color:var(--color-primary);text-decoration:none;}
+.breadcrumbs a:hover{text-decoration:underline;}
+.breadcrumbs .sep{margin:0 var(--spacing-1);}
+
+/* Header */
+.wo-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:var(--spacing-6);flex-wrap:wrap;gap:var(--spacing-4);}
+.wo-header-left h1{font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-1);}
+.wo-meta{display:flex;gap:var(--spacing-4);flex-wrap:wrap;font-size:var(--font-size-sm);color:var(--color-text-secondary);}
+.wo-meta-item{display:flex;align-items:center;gap:var(--spacing-1);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);border-radius:var(--radius-full);}
+.badge-info{background:var(--color-info-bg);color:var(--color-info);}
+.badge-warning{background:var(--color-warning-bg);color:var(--color-warning);}
+.badge-error{background:var(--color-error-bg);color:var(--color-error);}
+.tag{display:inline-flex;padding:1px 6px;font-size:var(--font-size-xs);background:var(--color-surface);color:var(--color-text-secondary);border-radius:var(--radius-sm);border:1px solid var(--color-border);}
+
+/* Action Buttons */
+.wo-actions{display:flex;gap:var(--spacing-3);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-2);padding:var(--spacing-2) var(--spacing-5);font-family:var(--font-family);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);border:2px solid transparent;border-radius:var(--radius-md);cursor:pointer;transition:all var(--transition-fast);min-height:40px;}
+.btn:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px;}
+.btn-success{background:var(--color-success);color:#fff;}
+.btn-success:hover{opacity:0.9;}
+.btn-warning{background:var(--color-warning);color:#161616;}
+.btn-warning:hover{opacity:0.9;}
+.btn-danger{background:var(--color-error);color:#fff;}
+.btn-danger:hover{opacity:0.9;}
+.btn-secondary{background:transparent;color:var(--color-text-primary);border-color:var(--color-border-strong);}
+.btn-secondary:hover{background:var(--color-surface-hover);}
+.btn:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-loading{position:relative;color:transparent !important;pointer-events:none;}
+.btn-loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Source Change Summary */
+.summary-card{background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--spacing-4);margin-bottom:var(--spacing-6);}
+.summary-card-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-3);color:var(--color-text-secondary);}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--spacing-4);font-size:var(--font-size-sm);}
+.summary-item-label{font-size:var(--font-size-xs);color:var(--color-text-muted);margin-bottom:2px;}
+.summary-item-value{font-weight:var(--font-weight-medium);}
+
+/* Tabs */
+.tabs{display:flex;border-bottom:2px solid var(--color-border);margin-bottom:var(--spacing-4);}
+.tab-btn{padding:var(--spacing-2) var(--spacing-4);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);color:var(--color-text-secondary);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all var(--transition-fast);font-family:var(--font-family);}
+.tab-btn:hover{color:var(--color-text-primary);}
+.tab-btn[aria-selected="true"]{color:var(--color-primary);border-bottom-color:var(--color-primary);}
+.tab-btn:focus-visible{outline:2px solid var(--color-focus);outline-offset:-2px;}
+
+/* Field Diff Table */
+.diff-table{width:100%;border-collapse:collapse;font-size:var(--font-size-sm);margin-bottom:var(--spacing-6);}
+.diff-table th{text-align:left;padding:var(--spacing-2) var(--spacing-3);background:var(--color-surface);font-weight:var(--font-weight-semibold);color:var(--color-text-secondary);border-bottom:2px solid var(--color-border);font-size:var(--font-size-xs);text-transform:uppercase;letter-spacing:0.03em;}
+.diff-table td{padding:var(--spacing-2) var(--spacing-3);border-bottom:1px solid var(--color-border);vertical-align:top;}
+.diff-old{color:var(--color-error);text-decoration:line-through;}
+.diff-new{color:var(--color-success);font-weight:var(--font-weight-medium);}
+.diff-unchanged{color:var(--color-text-muted);}
+.derivation-rule{font-family:var(--font-mono);font-size:var(--font-size-xs);color:var(--color-text-muted);background:var(--color-surface);padding:2px 6px;border-radius:var(--radius-sm);}
+
+/* Warning Banner */
+.warning-banner{display:flex;align-items:flex-start;gap:var(--spacing-2);padding:var(--spacing-3) var(--spacing-4);background:var(--color-warning-bg);border-left:3px solid var(--color-warning);border-radius:var(--radius-md);font-size:var(--font-size-sm);margin-bottom:var(--spacing-4);}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:1000;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--color-surface-raised);border-radius:var(--radius-lg);padding:var(--spacing-6);max-width:520px;width:90%;box-shadow:var(--shadow-xl);}
+.modal-title{font-size:var(--font-size-lg);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-3);}
+.modal-body{font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--spacing-4);}
+.modal-actions{display:flex;justify-content:flex-end;gap:var(--spacing-3);}
+.form-label{display:block;font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);margin-bottom:var(--spacing-1);color:var(--color-text-secondary);}
+.form-input{width:100%;padding:var(--spacing-2) var(--spacing-3);font-family:var(--font-family);font-size:var(--font-size-sm);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);min-height:36px;}
+.form-input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 1px var(--color-focus);}
+.char-count{font-size:var(--font-size-xs);color:var(--color-text-muted);text-align:right;margin-top:var(--spacing-1);}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;padding:var(--spacing-3) var(--spacing-4);border-radius:var(--radius-md);background:var(--color-success-bg);border:1px solid var(--color-success);box-shadow:var(--shadow-lg);font-size:var(--font-size-sm);color:var(--color-success);display:none;z-index:2000;max-width:380px;}
+.toast.show{display:flex;align-items:center;gap:var(--spacing-2);animation:slideUp .3s ease;}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* Disabled overlay for non-approvers */
+.role-notice{display:none;padding:var(--spacing-3) var(--spacing-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--spacing-4);text-align:center;}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
+
+<div class="page-container">
+  <nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep">/</span><a href="#">Work Orders</a><span class="sep">/</span><span>WO-2024-0014</span></nav>
+
+  <div class="wo-header">
+    <div class="wo-header-left">
+      <h1>WO-2024-0014 <span class="badge badge-info">● Pending</span></h1>
+      <div class="wo-meta">
+        <div class="wo-meta-item">Record: <strong>Acme Corp</strong></div>
+        <div class="wo-meta-item">Source: <span class="tag">CRM</span></div>
+        <div class="wo-meta-item">Targets: <span class="tag">ERP</span> <span class="tag">Accounting</span></div>
+        <div class="wo-meta-item">Detected: 14 Aug 2026 09:32 UTC</div>
+      </div>
+    </div>
+    <div class="wo-actions" id="actionButtons">
+      <button class="btn btn-success" id="approveBtn">✓ Approve</button>
+      <button class="btn btn-danger" id="rejectBtn">✕ Reject</button>
+      <button class="btn btn-warning" id="amendBtn">✎ Amend</button>
+    </div>
+  </div>
+
+  <div class="role-notice" id="roleNotice">⚠ Only users with the Approver role can authorise work orders.</div>
+
+  <!-- Source Change Summary -->
+  <div class="summary-card">
+    <div class="summary-card-title">Source Change Summary (CRM)</div>
+    <div class="summary-grid">
+      <div><div class="summary-item-label">Record ID</div><div class="summary-item-value" style="font-family:var(--font-mono)">ACC-10042</div></div>
+      <div><div class="summary-item-label">Record Name</div><div class="summary-item-value">Acme Corp</div></div>
+      <div><div class="summary-item-label">Change Type</div><div class="summary-item-value">Update</div></div>
+      <div><div class="summary-item-label">Changed Fields</div><div class="summary-item-value">billing_address, phone</div></div>
+    </div>
+  </div>
+
+  <!-- Target System Tabs -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-erp">ERP Writes</button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-acc">Accounting Writes</button>
+  </div>
+
+  <!-- ERP Panel -->
+  <div role="tabpanel" id="panel-erp">
+    <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--spacing-3)">Target: ERP · Record: <span style="font-family:var(--font-mono)">ERP-CUST-4281</span> (existing)</div>
+    <table class="diff-table">
+      <thead><tr><th>Field</th><th>Before</th><th>After</th><th>Derivation Rule</th></tr></thead>
+      <tbody>
+        <tr><td>company_name</td><td class="diff-unchanged">Acme Corp</td><td class="diff-unchanged">Acme Corp</td><td><span class="derivation-rule">1:1 copy account_name</span></td></tr>
+        <tr><td>billing_address</td><td class="diff-old">123 Old Street, London, EC1A 1BB, GB</td><td class="diff-new">456 New Avenue, Manchester, M1 2AB, GB</td><td><span class="derivation-rule">concat(street, city, postal, country)</span></td></tr>
+        <tr><td>phone</td><td class="diff-old">+44 20 7946 0958</td><td class="diff-new">+44 161 496 0123</td><td><span class="derivation-rule">1:1 copy phone</span></td></tr>
+        <tr><td>tax_id</td><td class="diff-unchanged">GB123456789</td><td class="diff-unchanged">GB123456789</td><td><span class="derivation-rule">1:1 copy vat_number</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Accounting Panel -->
+  <div role="tabpanel" id="panel-acc" style="display:none">
+    <div style="font-size:var(--font-size-sm);color:var(--color-text-secondary);margin-bottom:var(--spacing-3)">Target: Accounting · Record: <span style="font-family:var(--font-mono)">ACCT-V-2091</span> (existing)</div>
+    <table class="diff-table">
+      <thead><tr><th>Field</th><th>Before</th><th>After</th><th>Derivation Rule</th></tr></thead>
+      <tbody>
+        <tr><td>vendor_name</td><td class="diff-unchanged">Acme Corp</td><td class="diff-unchanged">Acme Corp</td><td><span class="derivation-rule">1:1 copy account_name</span></td></tr>
+        <tr><td>remittance_address</td><td class="diff-old">123 Old Street, London, EC1A 1BB, GB</td><td class="diff-new">456 New Avenue, Manchester, M1 2AB, GB</td><td><span class="derivation-rule">concat(street, city, postal, country)</span></td></tr>
+        <tr><td>contact_phone</td><td class="diff-old">+44 20 7946 0958</td><td class="diff-new">+44 161 496 0123</td><td><span class="derivation-rule">1:1 copy phone</span></td></tr>
+        <tr><td>vat_registration</td><td class="diff-unchanged">GB123456789</td><td class="diff-unchanged">GB123456789</td><td><span class="derivation-rule">1:1 copy vat_number</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Approve Modal -->
+<div class="modal-overlay" id="approveModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-title">Approve Work Order?</div>
+    <div class="modal-body">Are you sure you want to approve <strong>WO-2024-0014</strong>? This will execute writes to ERP and Accounting in an isolated sandbox.</div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-success" id="confirmApprove">Confirm Approval</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal-overlay" id="rejectModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-title">Reject Work Order?</div>
+    <div class="modal-body">
+      <p style="margin-bottom:var(--spacing-3)">Are you sure you want to reject <strong>WO-2024-0014</strong>?</p>
+      <label class="form-label" for="rejectReason">Reason (required)</label>
+      <textarea class="form-input" id="rejectReason" rows="3" maxlength="2000" placeholder="Provide reason for rejection…"></textarea>
+      <div class="char-count"><span id="rejectCharCount">0</span>/2000</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-danger" id="confirmReject">Confirm Rejection</button>
+    </div>
+  </div>
+</div>
+
+<!-- Amend Modal -->
+<div class="modal-overlay" id="amendModal">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-title">Amend Work Order</div>
+    <div class="modal-body">
+      <p style="margin-bottom:var(--spacing-3)">Submit amendment notes for <strong>WO-2024-0014</strong>. The work order will be re-derived and returned to the pending queue.</p>
+      <label class="form-label" for="amendNotes">Amendment Notes (required)</label>
+      <textarea class="form-input" id="amendNotes" rows="3" maxlength="2000" placeholder="Describe required changes…"></textarea>
+      <div class="char-count"><span id="amendCharCount">0</span>/2000</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" data-modal-close>Cancel</button>
+      <button class="btn btn-warning" id="confirmAmend">Submit Amendment</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toastMsg"></div>
+
+<script>
+(function(){
+  var isDark=false;
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    isDark=!isDark;
+    if(isDark){document.documentElement.setAttribute('data-theme','dark');this.textContent='🌙';}
+    else{document.documentElement.removeAttribute('data-theme');this.textContent='☀';}
+  });
+
+  // Tabs
+  var tabBtns=document.querySelectorAll('.tab-btn');
+  tabBtns.forEach(function(btn){
+    btn.addEventListener('click',function(){
+      tabBtns.forEach(function(b){b.setAttribute('aria-selected','false');var p=document.getElementById(b.getAttribute('aria-controls'));if(p)p.style.display='none';});
+      btn.setAttribute('aria-selected','true');
+      var panel=document.getElementById(btn.getAttribute('aria-controls'));
+      if(panel)panel.style.display='block';
+    });
+  });
+
+  // Modal helpers
+  function openModal(id){document.getElementById(id).classList.add('open');}
+  function closeModal(id){document.getElementById(id).classList.remove('open');}
+  function showToast(msg){var t=document.getElementById('toastMsg');t.textContent='✓ '+msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},3000);}
+
+  // Close modals
+  document.querySelectorAll('.modal-overlay').forEach(function(overlay){
+    overlay.addEventListener('click',function(e){if(e.target===overlay)closeModal(overlay.id);});
+  });
+  document.querySelectorAll('[data-modal-close]').forEach(function(btn){
+    btn.addEventListener('click',function(){var m=btn.closest('.modal-overlay');if(m)closeModal(m.id);});
+  });
+
+  // Approve
+  document.getElementById('approveBtn').addEventListener('click',function(){openModal('approveModal');});
+  document.getElementById('confirmApprove').addEventListener('click',function(){
+    var btn=this;btn.classList.add('btn-loading');btn.disabled=true;
+    setTimeout(function(){btn.classList.remove('btn-loading');btn.disabled=false;closeModal('approveModal');showToast('Work order WO-2024-0014 approved successfully.');},1200);
+  });
+
+  // Reject
+  document.getElementById('rejectBtn').addEventListener('click',function(){openModal('rejectModal');});
+  var rejectReason=document.getElementById('rejectReason');
+  var rejectCount=document.getElementById('rejectCharCount');
+  rejectReason.addEventListener('input',function(){rejectCount.textContent=rejectReason.value.length;});
+  document.getElementById('confirmReject').addEventListener('click',function(){
+    if(!rejectReason.value.trim()){rejectReason.style.borderColor='var(--color-error)';rejectReason.focus();return;}
+    var btn=this;btn.classList.add('btn-loading');btn.disabled=true;
+    setTimeout(function(){btn.classList.remove('btn-loading');btn.disabled=false;closeModal('rejectModal');showToast('Work order WO-2024-0014 rejected.');},1200);
+  });
+
+  // Amend
+  document.getElementById('amendBtn').addEventListener('click',function(){openModal('amendModal');});
+  var amendNotes=document.getElementById('amendNotes');
+  var amendCount=document.getElementById('amendCharCount');
+  amendNotes.addEventListener('input',function(){amendCount.textContent=amendNotes.value.length;});
+  document.getElementById('confirmAmend').addEventListener('click',function(){
+    if(!amendNotes.value.trim()){amendNotes.style.borderColor='var(--color-error)';amendNotes.focus();return;}
+    var btn=this;btn.classList.add('btn-loading');btn.disabled=true;
+    setTimeout(function(){btn.classList.remove('btn-loading');btn.disabled=false;closeModal('amendModal');showToast('Amendment submitted — work order returned to pending queue.');},1200);
+  });
+})();
+</script>
+</body>
+</html>

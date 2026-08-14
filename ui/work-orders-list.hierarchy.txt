@@ -1,0 +1,15 @@
+```
+WorkOrdersListPage
+├── ThemeToggle
+├── Breadcrumbs
+├── PageHeader
+├── SearchBar
+│   ├── SearchInput
+│   └── TargetFilterSelect
+├── StatusTabs (All, Pending, Synced, Failed, Rejected, Amended)
+├── DataTable
+│   ├── TableHeader (sortable columns)
+│   └── TableRow × n (clickable → detail)
+├── EmptyState
+└── Pagination
+```
