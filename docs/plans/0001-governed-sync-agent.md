@@ -89,6 +89,20 @@ response = sandbox.process.code_run('print("Hello World")')
    sandbox. Agent-generated integration code never touches a host.
 5. **Deploy/demo** — hosted URL; demo from the snapshot.
 
+### Forge ↔ repo ↔ Daytona wiring
+
+**Forge is connected to `github.com/qte77/2026-08-14-SF-AWS_EnterpriseHack`** (owner,
+2026-08-14). That closes the build-time seam: Forge generates → pushes to this repo →
+a Daytona sandbox clones it and runs the gates. No Forge API is needed for this.
+
+The *runtime* seam is separate and is where the 30% is earned: the Forge-built app itself
+imports the Daytona SDK and creates a sandbox **per authorised work order**, executing the
+generated integration code there and tearing it down after.
+
+> **Two writers on `main` from now on** — Forge and this session. Always `fetch` + rebase
+> before committing locally. Prefer having Forge push to its own branch so generated code and
+> the docs/plan do not tangle; merge deliberately.
+
 ### The governance spine (the differentiator)
 
 Every propagation the agent proposes is a **Work Order**: derived from the spec, shown to a

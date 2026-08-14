@@ -112,6 +112,10 @@ Platform API (lifecycle), Toolbox API (in-sandbox), Analytics API. OpenAPI specs
 - **Repo:** `github.com/qte77/2026-08-14-SF-AWS_EnterpriseHack`, remote `origin`, branch
   `main`. Local path is `__2026-08-14-SF-AWS_EnterpriseHack` (underscore-prefixed); the empty
   non-underscore twin has been deleted.
+- **Forge is connected to this repo** — so there are **two writers on `main`**. Always fetch
+  and rebase before committing. Watch that Forge-generated code does not commit secrets or
+  overwrite the root `.gitignore`; `.env` protection depends on it.
+- **Commit with `-c commit.gpgsign=false`** — signing is configured without a key.
 - **`.venv/` exists** with the Daytona SDK installed (`daytona==0.204.0`), created via
   `uv venv`. There is no `pip` on PATH — use `uv`.
 
