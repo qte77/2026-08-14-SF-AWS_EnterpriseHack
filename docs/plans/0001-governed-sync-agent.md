@@ -4,7 +4,7 @@
 **Event:** 2026-08-14, San Francisco · one-day build sprint · teams ≤4
 **Mandated stack:** SoftwareForge.ai (Forge) for development · Daytona for run/test/deploy
 
-### Logistics — from the Luma listing ([ev9ndfke](https://luma.com/ev9ndfke?tk=HDHAnx))
+### Logistics — from the [Luma listing](https://luma.com/ev9ndfke)
 
 | | |
 |---|---|
