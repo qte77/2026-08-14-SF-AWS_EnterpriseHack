@@ -91,6 +91,23 @@ def main() -> None:
             page.screenshot(path=str(SHOTS / f"audit-trail-{label}.png"), full_page=True)
             print(f"        screenshot -> docs/screenshots/audit-trail-{label}.png")
 
+            # Navigation: the Forge mockups ship standalone, with href="#" links and
+            # a sidebar of <button data-page>. Both are wired by scripts/wire_ui.py,
+            # and both have already been shipped broken once — so check them.
+            page.goto(f"{BASE}/ui/dashboard.html", wait_until="networkidle")
+            header = page.locator(".ll-nav a.ll-item").count()
+            check(f"{label} · header strip links every screen", header == 7, f"{header} links")
+
+            sidebar = page.locator(".nav-item[data-page]").count()
+            check(f"{label} · sidebar present", sidebar == 6, f"{sidebar} items")
+            page.click(".nav-item[data-page=audit]")
+            page.wait_for_load_state("networkidle")
+            check(f"{label} · sidebar navigates", "audit-trail.html" in page.url,
+                  page.url.split("/")[-1])
+            page.click(".ll-nav a[href='dashboard.html']")
+            page.wait_for_load_state("networkidle")
+            check(f"{label} · header navigates back", "dashboard.html" in page.url)
+
             check(f"{label} · no failed network requests", not failed_requests,
                   "; ".join(failed_requests[:2]))
             ctx.close()

@@ -20,6 +20,8 @@ UI = ROOT / "ui"
 
 MARK_OPEN = "<!-- ledgerline:nav -->"
 MARK_CLOSE = "<!-- /ledgerline:nav -->"
+SB_OPEN = "<!-- ledgerline:sidebar -->"
+SB_CLOSE = "<!-- /ledgerline:sidebar -->"
 
 # Order is the reviewer's path through the product, not alphabetical.
 NAV = [
@@ -38,6 +40,35 @@ BREADCRUMBS = {
     ">Work Orders<": "work-orders-list.html",
     ">Audit Trail<": "audit-trail.html",
 }
+
+# The AppLayout sidebar is <button class="nav-item" data-page="…">, not anchors, so it
+# needs a click binding rather than an href rewrite. Only dashboard.html carries one
+# today; this runs wherever the pattern appears, so a regenerated screen with a sidebar
+# gets wired too. "Pending Review" and "Approved" are the same list filtered, which the
+# list mockup cannot express — both land on the list.
+SIDEBAR_SCRIPT = """
+<script>
+(function(){
+  var MAP = {
+    dashboard: 'dashboard.html',
+    workorders: 'work-orders-list.html',
+    pending: 'work-orders-list.html',
+    approved: 'work-orders-list.html',
+    audit: 'audit-trail.html',
+    sandbox: 'sandbox-execution-log.html'
+  };
+  var here = location.pathname.split('/').pop();
+  if (!here || here === 'index.html') here = 'dashboard.html';
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-item[data-page]'), function(btn){
+    var target = MAP[btn.getAttribute('data-page')];
+    if (!target) return;
+    btn.style.cursor = 'pointer';
+    if (target === here) btn.classList.add('active');
+    btn.addEventListener('click', function(){ location.href = target; });
+  });
+})();
+</script>
+"""
 
 CSS = """
 <style>
@@ -83,9 +114,10 @@ def nav_html(current: str) -> str:
 def wire(path: pathlib.Path) -> str:
     html = path.read_text()
 
-    # Drop a previously injected strip so re-runs replace rather than stack.
-    html = re.sub(re.escape(MARK_OPEN) + ".*?" + re.escape(MARK_CLOSE), "", html,
-                  flags=re.DOTALL)
+    # Drop previously injected blocks so re-runs replace rather than stack.
+    for open_, close in ((MARK_OPEN, MARK_CLOSE), (SB_OPEN, SB_CLOSE)):
+        html = re.sub(re.escape(open_) + ".*?" + re.escape(close), "", html,
+                      flags=re.DOTALL)
 
     strip = nav_html(path.name)
     if "<body" in html:
@@ -97,6 +129,10 @@ def wire(path: pathlib.Path) -> str:
     for needle, target in BREADCRUMBS.items():
         html = html.replace(f'<a href="#"{needle}', f'<a href="{target}"{needle}')
         html = html.replace(f'href="#"{needle}', f'href="{target}"{needle}')
+
+    # Bind the sidebar last, at end of body, so the DOM it queries already exists.
+    if 'class="nav-item' in html and "</body>" in html:
+        html = html.replace("</body>", SB_OPEN + SIDEBAR_SCRIPT + SB_CLOSE + "</body>", 1)
     return html
 
 
