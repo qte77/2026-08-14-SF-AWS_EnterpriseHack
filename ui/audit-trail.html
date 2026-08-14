@@ -191,6 +191,11 @@ body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--
 (function(){
   'use strict';
 
+  // Served from the app itself, the API is same-origin. Published to GitHub
+  // Pages, it is not — so the landing page links here with ?api=<deploy url>.
+  var API = new URLSearchParams(location.search).get('api') || '';
+  if (API.slice(-1) === '/') API = API.slice(0, -1);
+
   var PAGE_SIZE = 25;
   var all = [];      // every entry from the server, newest first
   var shown = [];    // after filters
@@ -319,7 +324,7 @@ body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--
   // --- data ---------------------------------------------------------------
 
   function load(){
-    return fetch('/api/v1/audit?limit=1000')
+    return fetch(API + '/api/v1/audit?limit=1000')
       .then(function(r){ return r.json(); })
       .then(function(data){
         all = data.entries || [];
@@ -352,8 +357,9 @@ body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--
       })
       .catch(function(err){
         document.getElementById('resultCount').innerHTML =
-          '<span class="err">Cannot reach the API: ' + esc(err.message) +
-          '. Is the server running? <code>bash scripts/restart.sh</code></span>';
+          '<span class="err">Cannot reach the API at ' + esc(API || location.origin) +
+          ' — ' + esc(err.message) + '. Start it with <code>bash scripts/restart.sh</code>, ' +
+          'or append <code>?api=https://your-deploy</code> to this URL.</span>';
       });
   }
 
@@ -369,7 +375,7 @@ body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--
     var out = document.getElementById('traceResult');
     if (!rec) { out.className = 'trace-result visible'; out.innerHTML = '<span class="err">Enter a record ID.</span>'; return; }
 
-    fetch('/api/v1/audit/trace/' + encodeURIComponent(sys) + '/' + encodeURIComponent(rec))
+    fetch(API + '/api/v1/audit/trace/' + encodeURIComponent(sys) + '/' + encodeURIComponent(rec))
       .then(function(r){ return r.json().then(function(b){ return {ok: r.ok, body: b}; }); })
       .then(function(res){
         out.className = 'trace-result visible';

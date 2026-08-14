@@ -106,18 +106,27 @@ check("7 · record -> order -> approver -> code -> write",
 print("\n8. Audit trail is append-only and tamper-evident")
 chain = c.get("/api/v1/audit").json()["chain"]
 check("8a · hash chain intact", chain.get("intact") is True, str(chain)[:80])
-conn = sqlite3.connect(ROOT / "ledgerline.db")
-try:
-    conn.execute("UPDATE audit SET detail = '{}' WHERE seq = 1")
-    check("8b · UPDATE on audit blocked", False, "the UPDATE succeeded")
-except sqlite3.IntegrityError as exc:
-    check("8b · UPDATE on audit blocked", True, str(exc))
-try:
-    conn.execute("DELETE FROM audit WHERE seq = 1")
-    check("8c · DELETE on audit blocked", False, "the DELETE succeeded")
-except sqlite3.IntegrityError as exc:
-    check("8c · DELETE on audit blocked", True, str(exc))
-conn.close()
+
+# 8b/8c reach past the API into the ledger file, so they only run where that
+# file is local. Against a deployed instance the chain check above still holds,
+# and scripts/test_governance.py covers the trigger behaviour in CI.
+LOCAL = BASE.startswith(("http://127.0.0.1", "http://localhost"))
+if LOCAL:
+    conn = sqlite3.connect(ROOT / "ledgerline.db")
+    try:
+        conn.execute("UPDATE audit SET detail = '{}' WHERE seq = 1")
+        check("8b · UPDATE on audit blocked", False, "the UPDATE succeeded")
+    except sqlite3.IntegrityError as exc:
+        check("8b · UPDATE on audit blocked", True, str(exc))
+    try:
+        conn.execute("DELETE FROM audit WHERE seq = 1")
+        check("8c · DELETE on audit blocked", False, "the DELETE succeeded")
+    except sqlite3.IntegrityError as exc:
+        check("8c · DELETE on audit blocked", True, str(exc))
+    conn.close()
+else:
+    print("  SKIP  8b/8c · trigger checks need the ledger file (run locally, or see"
+          " scripts/test_governance.py)")
 
 print(f"\n{'=' * 62}\n{len(passed)} passed, {len(failed)} failed")
 if failed:
