@@ -37,7 +37,12 @@ def main() -> None:
     pages = json.loads((UI / "pages.json").read_text())
 
     def link(file: str) -> str:
-        return f"{file}?api={api}" if file in LIVE and api else file
+        # Deliberately no ?api= here. Daytona's preview proxy answers
+        # browser-shaped requests with its own HTML page instead of proxying the
+        # app, so a cross-origin fetch from Pages cannot reach a deploy. The
+        # published screen therefore reads the recorded run committed alongside
+        # it; ?api= stays available for anyone pointing it at a local instance.
+        return file
 
     rows = "\n".join(
         f'<li><a href="{link(p["file"])}">{p["name"]}</a>'
@@ -48,14 +53,31 @@ def main() -> None:
     )
 
     banner = (
-        f'<p class="ok">API: <a href="{api}">{api}</a> — the audit screen on this page '
-        f'reads from that deploy. If the sandbox has been torn down, run Ledgerline '
-        f'locally and open the screens from <code>http://localhost:8000/ui/</code>.</p>'
-        if api else
-        '<p class="warn">No deploy recorded. Run <code>uv run python scripts/deploy.py</code>.</p>'
+        '<p class="ok">The audit screen below shows a <b>recorded run</b> — real Daytona '
+        'sandboxes, a real approval and a real rejection, captured from a live instance. '
+        'It needs no backend, so this link keeps working. '
+        'For a live trail, run Ledgerline and open '
+        '<code>http://localhost:8000/ui/audit-trail.html</code>.</p>'
+        + (f'<p class="warn">The current Daytona deploy is '
+           f'<a href="{api}">{api}</a>. Opening it directly works; fetching it '
+           f'<i>from this page</i> does not — Daytona\'s preview proxy answers '
+           f'browser-shaped requests with its own HTML rather than proxying the app.</p>'
+           if api else
+           '<p class="warn">No deploy recorded. Run '
+           '<code>uv run python scripts/deploy.py</code>.</p>')
     )
 
-    (SITE / "index.html").write_text(f"""<!DOCTYPE html>
+    # There is no API behind the published bundle, so say so rather than let the
+    # page probe for one and log a 404 in every visitor's console.
+    audit = SITE / "audit-trail.html"
+    audit.write_text(audit.read_text().replace(
+        "<body>", "<body>\n<script>window.LEDGERLINE_STATIC = 1;</script>", 1))
+
+    # The dashboard is the product's entry point, so it is the site's index.
+    # The project overview it replaces moves to overview.html, linked from it.
+    shutil.copyfile(SITE / "dashboard.html", SITE / "index.html")
+
+    (SITE / "overview.html").write_text(f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ledgerline — governed cross-system sync</title>

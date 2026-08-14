@@ -13,11 +13,15 @@ Built on **[SoftwareForge](https://softwareforge.ai/)** · Runs on **[Daytona](h
 
 | | |
 |---|---|
-| **Screens (permanent)** | <https://qte77.github.io/2026-08-14-SF-AWS_EnterpriseHack/> |
+| **Live prototype (permanent)** | <https://qte77.github.io/2026-08-14-SF-AWS_EnterpriseHack/> — opens on the dashboard; all eight screens are linked |
 | **Live app on Daytona** | <https://8000-8cff584c-c83c-45cb-a1c8-8b8767705f72.daytonaproxy01.net> |
-| **SoftwareForge spec** | artifact `90bd0b04-21ba-4674-86d3-f40a2e3a8a1e` — _`<!-- TODO: owner, paste the shareable Forge project URL -->`_ |
+| **SoftwareForge project** | <https://app.softwareforge.ai/projects/b59c3030-a956-44ff-8100-fd60fea668ce> |
 | **Demo video** | _`<!-- TODO: 2–3 min walkthrough, recorded from the Daytona environment -->`_ |
 | **Team** | _`<!-- TODO: team name + members -->`_ |
+
+The published audit trail shows a **recorded run** — real Daytona sandboxes, a real
+approval, a real rejection — so the link works with no backend attached. Run
+Ledgerline locally for a live trail.
 
 The Pages link is permanent; the Daytona URL lives only as long as its sandbox
 (`8cff584c-c83c-45cb-a1c8-8b8767705f72`, snapshot `ledgerline-b312e26-230625`). Redeploy with
@@ -49,17 +53,18 @@ authorising order to the sandbox and the code that executed](docs/screenshots/au
 
 ![The audit trail at a 390px viewport](docs/screenshots/audit-trail-mobile.png)
 
-### Published screens (GitHub Pages)
+### The published app — dashboard entry point, screens wired together
 
-![The Ledgerline Pages site listing all eight Forge-designed screens](docs/screenshots/pages-landing.png)
+![The Ledgerline dashboard as published, with the nav strip linking all eight screens](docs/screenshots/pages-dashboard.png)
 
-### Pages talking to the live Daytona deploy
+The project overview lives at [`overview.html`](https://qte77.github.io/2026-08-14-SF-AWS_EnterpriseHack/overview.html).
 
-The published audit screen reading the API on a different origin — proof the
-`?api=` wiring and CORS work end to end.
+![The Ledgerline overview page listing all eight Forge-designed screens](docs/screenshots/pages-landing.png)
 
-![The published audit trail rendering live entries fetched cross-origin from the
-Daytona deploy](docs/screenshots/pages-audit-trail.png)
+### The published audit trail, backed by a recorded run
+
+![The published audit trail rendering a recorded run with the chain verified and a
+record traced](docs/screenshots/pages-audit-trail.png)
 
 ### The app served from Daytona
 

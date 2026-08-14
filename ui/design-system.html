@@ -284,7 +284,27 @@ tbody tr:hover{background:var(--color-surface-hover);}
 }
 </style>
 </head>
-<body>
+<body><!-- ledgerline:nav -->
+<style>
+.ll-nav{position:sticky;top:0;z-index:9998;display:flex;align-items:center;gap:2px;
+flex-wrap:wrap;padding:8px 12px;background:var(--color-surface-raised,#fff);
+border-bottom:1px solid var(--color-border,#e0e0e0);
+font-family:var(--font-family,system-ui);font-size:13px}
+.ll-nav .ll-brand{font-weight:700;margin-right:10px;color:var(--color-text-primary,#161616);
+text-decoration:none;letter-spacing:-.01em}
+.ll-nav a{padding:5px 10px;border-radius:4px;text-decoration:none;
+color:var(--color-text-secondary,#525252)}
+.ll-nav a:hover{background:var(--color-surface-hover,#e8e8e8)}
+.ll-nav a.on{background:var(--color-primary,#0f62fe);color:#fff}
+.ll-nav .ll-tag{font-size:10px;padding:1px 6px;border-radius:99px;margin-left:4px;
+background:var(--color-surface,#f4f4f4);color:var(--color-text-muted,#8d8d8d)}
+.ll-nav a.on .ll-tag{background:rgba(255,255,255,.25);color:#fff}
+.ll-nav .ll-live{background:var(--color-success-bg,#defbe6);color:var(--color-success,#198038)}
+.ll-nav .ll-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ll-nav .ll-right a{font-size:12px}
+@media(max-width:640px){.ll-nav .ll-right{display:none}}
+</style>
+<nav class="ll-nav" aria-label="Ledgerline screens"><a class="ll-brand" href="dashboard.html">Ledgerline</a><a class="ll-item" href="dashboard.html">Dashboard<span class="ll-tag">design</span></a><a class="ll-item" href="work-orders-list.html">Work Orders<span class="ll-tag">design</span></a><a class="ll-item" href="work-order-detail.html">Review<span class="ll-tag">design</span></a><a class="ll-item" href="audit-trail.html">Audit Trail<span class="ll-tag ll-live">live</span></a><a class="ll-item" href="sandbox-execution-log.html">Sandbox Log<span class="ll-tag">design</span></a><a class="ll-item on" href="design-system.html">Design System<span class="ll-tag">design</span></a><a class="ll-item" href="login.html">Login<span class="ll-tag">design</span></a><span class="ll-right"><a href="https://github.com/qte77/2026-08-14-SF-AWS_EnterpriseHack">Source</a></span></nav><!-- /ledgerline:nav -->
 <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
 
 <div class="ds-header">
@@ -454,7 +474,7 @@ tbody tr:hover{background:var(--color-surface-hover);}
     </div>
     <div class="ds-subsection">
       <h3 class="ds-subsection-title">Breadcrumbs</h3>
-      <nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep">/</span><a href="#">Work Orders</a><span class="sep">/</span><span>WO-2024-0012</span></nav>
+      <nav class="breadcrumbs"><a href="dashboard.html">Dashboard</a><span class="sep">/</span><a href="work-orders-list.html">Work Orders</a><span class="sep">/</span><span>WO-2024-0012</span></nav>
     </div>
   </section>
 
