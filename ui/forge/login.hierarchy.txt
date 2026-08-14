@@ -1,0 +1,18 @@
+```
+LoginPage
+├── ThemeToggle
+├── LoginLogo
+├── LoginCard
+│   ├── LoginSection
+│   │   ├── LockoutBanner (conditional)
+│   │   ├── AlertBanner (error / session expired)
+│   │   ├── EmailInput + ValidationMessage
+│   │   ├── PasswordInput + ValidationMessage
+│   │   └── SubmitButton (with loading state)
+│   └── MFASection
+│       ├── AlertBanner (error)
+│       ├── MFACodeInputGroup (6 digits)
+│       ├── VerifyButton (with loading state)
+│       └── BackupCodeLink
+└── LoginFooter
+```

@@ -1,0 +1,22 @@
+```
+AuditTrailPage
+├── ThemeToggle
+├── Breadcrumbs
+├── PageHeader
+│   ├── Title
+│   └── ExportDropdown (JSON / CSV)
+├── FilterBar
+│   ├── DateRange (from, to)
+│   ├── SystemSelect
+│   ├── StatusSelect
+│   ├── ReviewerInput
+│   ├── SearchButton
+│   └── ClearButton
+├── ResultsCount
+├── AuditEntryList
+│   └── AuditEntry × n
+│       ├── EntryHeader (event, work order, actor, timestamp)
+│       └── EntryBody (expandable JSON payload)
+├── EmptyState
+└── Pagination
+```

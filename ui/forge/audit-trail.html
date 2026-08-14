@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledgerline — Audit Trail</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--color-primary:#0f62fe;--color-primary-hover:#0353e9;--color-bg:#ffffff;--color-surface:#f4f4f4;--color-surface-hover:#e8e8e8;--color-surface-raised:#ffffff;--color-text-primary:#161616;--color-text-secondary:#525252;--color-text-muted:#8d8d8d;--color-text-inverse:#ffffff;--color-border:#e0e0e0;--color-border-strong:#8d8d8d;--color-success:#198038;--color-success-bg:#defbe6;--color-warning:#b28600;--color-warning-bg:#fdf6dd;--color-error:#da1e28;--color-error-bg:#fff1f1;--color-info:#0043ce;--color-info-bg:#edf5ff;--color-focus:#0f62fe;--font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono',Consolas,monospace;--font-size-xs:0.75rem;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-xl:1.25rem;--font-size-2xl:1.5rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-6:24px;--spacing-8:32px;--spacing-12:48px;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 2px 6px rgba(0,0,0,0.08);--shadow-lg:0 4px 12px rgba(0,0,0,0.12);--radius-sm:2px;--radius-md:4px;--radius-lg:8px;--radius-full:9999px;--transition-fast:120ms ease;--transition-normal:200ms ease;}
+[data-theme="dark"]{--color-primary:#78a9ff;--color-primary-hover:#a6c8ff;--color-bg:#161616;--color-surface:#262626;--color-surface-hover:#353535;--color-surface-raised:#393939;--color-text-primary:#f4f4f4;--color-text-secondary:#c6c6c6;--color-text-muted:#6f6f6f;--color-text-inverse:#161616;--color-border:#393939;--color-border-strong:#6f6f6f;--color-success:#42be65;--color-success-bg:#044317;--color-warning:#f1c21b;--color-warning-bg:#3a2f00;--color-error:#fa4d56;--color-error-bg:#470b0e;--color-info:#4589ff;--color-info-bg:#001d6c;--color-focus:#78a9ff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--color-text-primary);background:var(--color-bg);transition:background var(--transition-normal);}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-raised);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-sm);}
+.theme-toggle:hover{background:var(--color-surface-hover);}
+.page-container{max-width:1200px;margin:0 auto;padding:var(--spacing-6) var(--spacing-8);}
+@media(max-width:768px){.page-container{padding:var(--spacing-4);}}
+
+.breadcrumbs{display:flex;align-items:center;gap:var(--spacing-1);font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--spacing-4);}
+.breadcrumbs a{color:var(--color-primary);text-decoration:none;}
+.breadcrumbs a:hover{text-decoration:underline;}
+.breadcrumbs .sep{margin:0 var(--spacing-1);}
+
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-6);flex-wrap:wrap;gap:var(--spacing-3);}
+.page-header h1{font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);}
+.badge{display:inline-flex;align-items:center;gap:var(--spacing-1);padding:2px 10px;font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);border-radius:var(--radius-full);}
+.badge-info{background:var(--color-info-bg);color:var(--color-info);}
+
+/* Filters */
+.filter-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:var(--spacing-3);margin-bottom:var(--spacing-4);padding:var(--spacing-4);background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);}
+.filter-group{display:flex;flex-direction:column;gap:var(--spacing-1);}
+.filter-label{font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);color:var(--color-text-muted);}
+.filter-input{padding:var(--spacing-2) var(--spacing-3);font-family:var(--font-family);font-size:var(--font-size-sm);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);min-height:34px;}
+.filter-input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 1px var(--color-focus);}
+.filter-actions{display:flex;gap:var(--spacing-2);align-items:flex-end;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:var(--spacing-2);padding:var(--spacing-2) var(--spacing-4);font-family:var(--font-family);font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);border:2px solid transparent;border-radius:var(--radius-md);cursor:pointer;transition:all var(--transition-fast);min-height:34px;}
+.btn:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px;}
+.btn-primary{background:var(--color-primary);color:var(--color-text-inverse);}
+.btn-primary:hover{background:var(--color-primary-hover);}
+.btn-secondary{background:transparent;color:var(--color-text-primary);border-color:var(--color-border-strong);}
+.btn-secondary:hover{background:var(--color-surface-hover);}
+.btn-ghost{background:transparent;color:var(--color-primary);border:none;}
+.btn-ghost:hover{background:var(--color-info-bg);}
+
+/* Audit entries */
+.audit-list{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow:hidden;}
+.audit-entry{border-bottom:1px solid var(--color-border);}
+.audit-entry:last-child{border-bottom:none;}
+.audit-entry-header{display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;align-items:center;gap:var(--spacing-3);padding:var(--spacing-3) var(--spacing-4);background:var(--color-surface-raised);cursor:pointer;transition:background var(--transition-fast);font-size:var(--font-size-sm);}
+@media(max-width:768px){.audit-entry-header{grid-template-columns:1fr 1fr;gap:var(--spacing-2);}}
+.audit-entry-header:hover{background:var(--color-surface-hover);}
+.audit-entry-header:focus-visible{outline:2px solid var(--color-focus);outline-offset:-2px;}
+.audit-label{font-size:var(--font-size-xs);color:var(--color-text-muted);}
+.audit-value{font-weight:var(--font-weight-medium);}
+.chevron{transition:transform var(--transition-fast);font-size:var(--font-size-xs);color:var(--color-text-muted);}
+.audit-entry.open .chevron{transform:rotate(180deg);}
+.audit-entry-body{display:none;padding:var(--spacing-4);background:var(--color-surface);font-size:var(--font-size-sm);border-top:1px solid var(--color-border);}
+.audit-entry.open .audit-entry-body{display:block;}
+.payload-block{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:var(--spacing-3);font-family:var(--font-mono);font-size:var(--font-size-xs);white-space:pre-wrap;overflow-x:auto;max-height:300px;overflow-y:auto;line-height:1.6;}
+
+.tag{display:inline-flex;padding:1px 6px;font-size:var(--font-size-xs);background:var(--color-surface);color:var(--color-text-secondary);border-radius:var(--radius-sm);border:1px solid var(--color-border);}
+.badge-success{background:var(--color-success-bg);color:var(--color-success);}
+.badge-warning{background:var(--color-warning-bg);color:var(--color-warning);}
+.badge-error{background:var(--color-error-bg);color:var(--color-error);}
+.badge-neutral{background:var(--color-surface);color:var(--color-text-secondary);}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:var(--spacing-4);font-size:var(--font-size-sm);color:var(--color-text-secondary);flex-wrap:wrap;gap:var(--spacing-2);}
+.pagination-btns{display:flex;gap:var(--spacing-1);}
+.page-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-raised);color:var(--color-text-primary);cursor:pointer;font-size:var(--font-size-sm);font-family:var(--font-family);transition:all var(--transition-fast);}
+.page-btn:hover{background:var(--color-surface-hover);}
+.page-btn.active{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary);}
+
+/* Empty state */
+.empty-state{text-align:center;padding:var(--spacing-12) var(--spacing-8);color:var(--color-text-muted);font-size:var(--font-size-sm);display:none;}
+.empty-state.visible{display:block;}
+
+/* Dropdown */
+.dropdown{position:relative;display:inline-block;}
+.dropdown-menu{position:absolute;top:100%;right:0;margin-top:var(--spacing-1);background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);min-width:160px;z-index:100;display:none;}
+.dropdown-menu.open{display:block;}
+.dropdown-item{display:block;width:100%;padding:var(--spacing-2) var(--spacing-3);font-size:var(--font-size-sm);color:var(--color-text-primary);background:none;border:none;cursor:pointer;text-align:left;font-family:var(--font-family);}
+.dropdown-item:hover{background:var(--color-surface-hover);}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
+
+<div class="page-container">
+  <nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep">/</span><span>Audit Trail</span></nav>
+
+  <div class="page-header">
+    <h1>🔒 Audit Trail</h1>
+    <div style="display:flex;gap:var(--spacing-2)">
+      <div class="dropdown">
+        <button class="btn btn-secondary" id="exportBtn">↓ Export</button>
+        <div class="dropdown-menu" id="exportMenu">
+          <button class="dropdown-item" id="exportJson">Export as JSON</button>
+          <button class="dropdown-item" id="exportCsv">Export as CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">Date From</span>
+      <input class="filter-input" type="date" value="2026-08-07">
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Date To</span>
+      <input class="filter-input" type="date" value="2026-08-14">
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">System</span>
+      <select class="filter-input"><option value="">All Systems</option><option>CRM</option><option>ERP</option><option>Accounting</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Status</span>
+      <select class="filter-input"><option value="">All Statuses</option><option>Pending</option><option>Approved</option><option>Rejected</option><option>Amended</option><option>Synced</option><option>Failed</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Reviewer</span>
+      <input class="filter-input" type="text" placeholder="User ID…">
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-primary" id="searchBtn">Search</button>
+      <button class="btn btn-ghost" id="clearBtn">Clear</button>
+    </div>
+  </div>
+
+  <div style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-bottom:var(--spacing-3)">Showing 6 of 248 records — filtered by last 7 days</div>
+
+  <!-- Audit Entries -->
+  <div class="audit-list" id="auditList">
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Work Order Created</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0014</div></div><div><div class="audit-label">Actor</div><div class="audit-value">System (agent)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">14 Aug 2026 09:32:20</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "work_order.created",
+  "work_order_id": "WO-2024-0014",
+  "actor": "system:change-detection",
+  "timestamp": "2026-08-14T09:32:20.412Z",
+  "payload": {
+    "source_record": "ACC-10042",
+    "source_system": "CRM",
+    "targets": ["ERP", "Accounting"],
+    "status": "Pending",
+    "changed_fields": ["billing_address", "phone"]
+  },
+  "hash": "a3f8c1...b92e",
+  "prev_hash": "7d2e01...4f1a"
+}</div></div>
+    </div>
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Work Order Approved</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0011</div></div><div><div class="audit-label">Actor</div><div class="audit-value">J. Chen (Approver)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">14 Aug 2026 08:48:03</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "work_order.approved",
+  "work_order_id": "WO-2024-0011",
+  "actor": "user:jchen@company.com",
+  "role": "Approver",
+  "timestamp": "2026-08-14T08:48:03.112Z",
+  "payload": {
+    "decision": "approved",
+    "work_order_snapshot": { "...full snapshot..." }
+  },
+  "hash": "b12f3a...c41d",
+  "prev_hash": "a3f8c1...b92e"
+}</div></div>
+    </div>
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Sandbox Executed</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0011</div></div><div><div class="audit-label">Actor</div><div class="audit-value">System (executor)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">14 Aug 2026 08:48:08</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "sandbox.executed",
+  "work_order_id": "WO-2024-0011",
+  "sandbox_id": "sbx-a7c3e2f1",
+  "created_at": "2026-08-14T08:48:04.201Z",
+  "executed_at": "2026-08-14T08:48:06.889Z",
+  "destroyed_at": "2026-08-14T08:48:07.102Z",
+  "resource_limits": { "memory": "256MB", "cpu": "0.5", "timeout": "30s" },
+  "results": [
+    { "target": "Accounting", "status": "success", "response_code": 200 }
+  ],
+  "hash": "e45d2b...f83a",
+  "prev_hash": "b12f3a...c41d"
+}</div></div>
+    </div>
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Work Order Rejected</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0008</div></div><div><div class="audit-label">Actor</div><div class="audit-value">J. Chen (Approver)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">13 Aug 2026 16:30:45</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "work_order.rejected",
+  "work_order_id": "WO-2024-0008",
+  "actor": "user:jchen@company.com",
+  "reason": "Incorrect tax ID mapping — source VAT number GB999999999 does not match registrar records.",
+  "timestamp": "2026-08-13T16:30:45.882Z",
+  "hash": "f19a7c...d21b"
+}</div></div>
+    </div>
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Execution Failed</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0010</div></div><div><div class="audit-label">Actor</div><div class="audit-value">System (executor)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">14 Aug 2026 08:24:12</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "sandbox.failed",
+  "work_order_id": "WO-2024-0010",
+  "attempts": 3,
+  "last_error": "ERP endpoint returned HTTP 503 Service Unavailable",
+  "retry_history": [
+    { "attempt": 1, "sandbox_id": "sbx-d4e1f2a3", "error": "503", "at": "08:22:58" },
+    { "attempt": 2, "sandbox_id": "sbx-e5f2a3b4", "error": "503", "at": "08:23:01" },
+    { "attempt": 3, "sandbox_id": "sbx-f6a3b4c5", "error": "503", "at": "08:23:06" }
+  ],
+  "final_status": "Failed",
+  "hash": "c83e1f...a92d"
+}</div></div>
+    </div>
+    <div class="audit-entry">
+      <div class="audit-entry-header" tabindex="0"><div><div class="audit-label">Event</div><div class="audit-value">Work Order Amended</div></div><div><div class="audit-label">Work Order</div><div class="audit-value" style="font-family:var(--font-mono)">WO-2024-0012</div></div><div><div class="audit-label">Actor</div><div class="audit-value">J. Chen (Approver)</div></div><div><div class="audit-label">Timestamp</div><div class="audit-value">14 Aug 2026 09:16:02</div></div><span class="chevron">▼</span></div>
+      <div class="audit-entry-body"><div class="payload-block">{
+  "event_type": "work_order.amended",
+  "work_order_id": "WO-2024-0012",
+  "original_version": 1,
+  "new_version": 2,
+  "actor": "user:jchen@company.com",
+  "notes": "Billing address needs to use UK format with county. Please re-derive.",
+  "timestamp": "2026-08-14T09:16:02.445Z",
+  "hash": "d72b4e...c13f"
+}</div></div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="emptyState">No audit records match your filters.</div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <span>Page 1 of 10 · 248 total records</span>
+    <div class="pagination-btns">
+      <button class="page-btn" disabled>‹</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">…</button>
+      <button class="page-btn">10</button>
+      <button class="page-btn">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var isDark=false;
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    isDark=!isDark;
+    if(isDark){document.documentElement.setAttribute('data-theme','dark');this.textContent='🌙';}
+    else{document.documentElement.removeAttribute('data-theme');this.textContent='☀';}
+  });
+
+  // Accordion entries
+  var entries=document.querySelectorAll('.audit-entry-header');
+  entries.forEach(function(h){
+    h.addEventListener('click',function(){h.parentElement.classList.toggle('open');});
+    h.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();h.parentElement.classList.toggle('open');}});
+  });
+
+  // Export dropdown
+  var exportBtn=document.getElementById('exportBtn');
+  var exportMenu=document.getElementById('exportMenu');
+  exportBtn.addEventListener('click',function(e){e.stopPropagation();exportMenu.classList.toggle('open');});
+  document.addEventListener('click',function(){exportMenu.classList.remove('open');});
+  document.getElementById('exportJson').addEventListener('click',function(){alert('Exporting audit records as JSON…');exportMenu.classList.remove('open');});
+  document.getElementById('exportCsv').addEventListener('click',function(){alert('Exporting audit records as CSV…');exportMenu.classList.remove('open');});
+
+  // Search (simulated)
+  document.getElementById('searchBtn').addEventListener('click',function(){
+    this.textContent='Searching…';
+    var btn=this;
+    setTimeout(function(){btn.textContent='Search';},800);
+  });
+  document.getElementById('clearBtn').addEventListener('click',function(){
+    document.querySelectorAll('.filter-input').forEach(function(inp){if(inp.tagName==='SELECT')inp.selectedIndex=0;else inp.value='';});
+  });
+
+  // Pagination
+  document.querySelectorAll('.page-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(btn.disabled)return;
+      document.querySelectorAll('.page-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+    });
+  });
+})();
+</script>
+</body>
+</html>

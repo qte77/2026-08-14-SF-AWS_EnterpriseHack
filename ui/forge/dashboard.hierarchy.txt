@@ -1,0 +1,32 @@
+```
+DashboardPage
+├── ThemeToggle
+├── ConnectionBanner (WebSocket error)
+├── AppLayout
+│   ├── Sidebar
+│   │   ├── Logo
+│   │   ├── NavSection: Overview
+│   │   │   ├── NavItem: Dashboard (active)
+│   │   │   └── NavItem: Work Orders [badge: 7]
+│   │   ├── NavSection: Review
+│   │   │   ├── NavItem: Pending Review [badge: 3]
+│   │   │   └── NavItem: Approved
+│   │   ├── NavSection: Compliance
+│   │   │   ├── NavItem: Audit Trail
+│   │   │   └── NavItem: Sandbox Log
+│   │   └── SidebarFooter (user avatar + role)
+│   └── MainContent
+│       ├── TopBar (title + last updated)
+│       ├── StatusCardGrid
+│       │   ├── StatusCard: Pending (3)
+│       │   ├── StatusCard: Synced (42)
+│       │   ├── StatusCard: Failed (1)
+│       │   ├── StatusCard: Rejected (4)
+│       │   └── StatusCard: Amended (2)
+│       ├── LiveChangeFeed
+│       │   ├── HeartbeatIndicator
+│       │   └── FeedItem × n
+│       └── WorkOrdersTable
+│           ├── FilterToolbar
+│           └── DataTable
+```

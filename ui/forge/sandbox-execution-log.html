@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledgerline — Sandbox Execution Log</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--color-primary:#0f62fe;--color-primary-hover:#0353e9;--color-bg:#ffffff;--color-surface:#f4f4f4;--color-surface-hover:#e8e8e8;--color-surface-raised:#ffffff;--color-text-primary:#161616;--color-text-secondary:#525252;--color-text-muted:#8d8d8d;--color-text-inverse:#ffffff;--color-border:#e0e0e0;--color-border-strong:#8d8d8d;--color-success:#198038;--color-success-bg:#defbe6;--color-warning:#b28600;--color-warning-bg:#fdf6dd;--color-error:#da1e28;--color-error-bg:#fff1f1;--color-info:#0043ce;--color-info-bg:#edf5ff;--color-focus:#0f62fe;--font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono',Consolas,monospace;--font-size-xs:0.75rem;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-xl:1.25rem;--font-size-2xl:1.5rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-6:24px;--spacing-8:32px;--spacing-12:48px;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 2px 6px rgba(0,0,0,0.08);--shadow-lg:0 4px 12px rgba(0,0,0,0.12);--radius-sm:2px;--radius-md:4px;--radius-lg:8px;--radius-full:9999px;--transition-fast:120ms ease;--transition-normal:200ms ease;}
+[data-theme="dark"]{--color-primary:#78a9ff;--color-primary-hover:#a6c8ff;--color-bg:#161616;--color-surface:#262626;--color-surface-hover:#353535;--color-surface-raised:#393939;--color-text-primary:#f4f4f4;--color-text-secondary:#c6c6c6;--color-text-muted:#6f6f6f;--color-text-inverse:#161616;--color-border:#393939;--color-border-strong:#6f6f6f;--color-success:#42be65;--color-success-bg:#044317;--color-warning:#f1c21b;--color-warning-bg:#3a2f00;--color-error:#fa4d56;--color-error-bg:#470b0e;--color-info:#4589ff;--color-info-bg:#001d6c;--color-focus:#78a9ff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--color-text-primary);background:var(--color-bg);transition:background var(--transition-normal);}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-raised);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-sm);}
+.page-container{max-width:1100px;margin:0 auto;padding:var(--spacing-6) var(--spacing-8);}
+@media(max-width:768px){.page-container{padding:var(--spacing-4);}}
+.breadcrumbs{display:flex;align-items:center;gap:var(--spacing-1);font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--spacing-4);}
+.breadcrumbs a{color:var(--color-primary);text-decoration:none;}
+.breadcrumbs .sep{margin:0 var(--spacing-1);}
+h1{font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-6);}
+
+.badge{display:inline-flex;align-items:center;padding:2px 8px;font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);border-radius:var(--radius-full);}
+.badge-success{background:var(--color-success-bg);color:var(--color-success);}
+.badge-error{background:var(--color-error-bg);color:var(--color-error);}
+.tag{display:inline-flex;padding:1px 6px;font-size:var(--font-size-xs);background:var(--color-surface);color:var(--color-text-secondary);border-radius:var(--radius-sm);border:1px solid var(--color-border);}
+
+/* Execution cards */
+.exec-card{background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-md);margin-bottom:var(--spacing-4);overflow:hidden;}
+.exec-card-header{display:flex;justify-content:space-between;align-items:center;padding:var(--spacing-3) var(--spacing-4);cursor:pointer;transition:background var(--transition-fast);flex-wrap:wrap;gap:var(--spacing-2);}
+.exec-card-header:hover{background:var(--color-surface-hover);}
+.exec-card-left{display:flex;align-items:center;gap:var(--spacing-3);}
+.exec-card-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);}
+.exec-card-meta{font-size:var(--font-size-xs);color:var(--color-text-muted);}
+.chevron{transition:transform var(--transition-fast);font-size:var(--font-size-xs);color:var(--color-text-muted);}
+.exec-card.open .chevron{transform:rotate(180deg);}
+.exec-card-body{display:none;padding:var(--spacing-4);border-top:1px solid var(--color-border);}
+.exec-card.open .exec-card-body{display:block;}
+
+/* Lifecycle */
+.lifecycle{display:flex;align-items:center;gap:var(--spacing-2);margin-bottom:var(--spacing-4);flex-wrap:wrap;}
+.lifecycle-step{display:flex;align-items:center;gap:var(--spacing-1);padding:var(--spacing-1) var(--spacing-3);background:var(--color-surface);border-radius:var(--radius-full);font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);}
+.lifecycle-step.active{background:var(--color-success-bg);color:var(--color-success);}
+.lifecycle-step.failed{background:var(--color-error-bg);color:var(--color-error);}
+.lifecycle-arrow{color:var(--color-text-muted);font-size:var(--font-size-sm);}
+
+/* Detail grid */
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:var(--spacing-4);margin-bottom:var(--spacing-4);}
+.detail-item-label{font-size:var(--font-size-xs);color:var(--color-text-muted);margin-bottom:2px;}
+.detail-item-value{font-size:var(--font-size-sm);font-weight:var(--font-weight-medium);}
+
+/* Retry table */
+.retry-section{margin-top:var(--spacing-4);}
+.retry-title{font-size:var(--font-size-sm);font-weight:var(--font-weight-semibold);margin-bottom:var(--spacing-2);color:var(--color-error);}
+table{width:100%;border-collapse:collapse;font-size:var(--font-size-sm);}
+th{text-align:left;padding:var(--spacing-2) var(--spacing-3);background:var(--color-surface);font-weight:var(--font-weight-semibold);color:var(--color-text-secondary);border-bottom:2px solid var(--color-border);font-size:var(--font-size-xs);}
+td{padding:var(--spacing-2) var(--spacing-3);border-bottom:1px solid var(--color-border);}
+.table-wrapper{border:1px solid var(--color-border);border-radius:var(--radius-md);overflow-x:auto;}
+
+/* Governance badge */
+.gov-badge{display:inline-flex;align-items:center;gap:var(--spacing-1);padding:var(--spacing-1) var(--spacing-3);border-radius:var(--radius-full);font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);}
+.gov-badge-success{background:var(--color-success-bg);color:var(--color-success);border:1px solid var(--color-success);}
+.gov-badge-error{background:var(--color-error-bg);color:var(--color-error);border:1px solid var(--color-error);}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
+
+<div class="page-container">
+  <nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep">/</span><span>Sandbox Log</span></nav>
+  <h1>🛡 Sandbox Execution Log</h1>
+
+  <!-- Successful Execution -->
+  <div class="exec-card" id="exec1">
+    <div class="exec-card-header"><div class="exec-card-left"><span class="gov-badge gov-badge-success">🛡 Isolated</span><div><div class="exec-card-title">WO-2024-0011 · Wayne Enterprises</div><div class="exec-card-meta">14 Aug 2026 08:48 · Sandbox sbx-a7c3e2f1</div></div></div><div style="display:flex;align-items:center;gap:var(--spacing-2)"><span class="badge badge-success">● Success</span><span class="chevron">▼</span></div></div>
+    <div class="exec-card-body">
+      <div class="lifecycle"><span class="lifecycle-step active">✓ Created</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step active">✓ Executed</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step active">✓ Destroyed</span></div>
+      <div class="detail-grid">
+        <div><div class="detail-item-label">Sandbox ID</div><div class="detail-item-value" style="font-family:var(--font-mono)">sbx-a7c3e2f1</div></div>
+        <div><div class="detail-item-label">Created At</div><div class="detail-item-value">2026-08-14T08:48:04.201Z</div></div>
+        <div><div class="detail-item-label">Executed At</div><div class="detail-item-value">2026-08-14T08:48:06.889Z</div></div>
+        <div><div class="detail-item-label">Destroyed At</div><div class="detail-item-value">2026-08-14T08:48:07.102Z</div></div>
+        <div><div class="detail-item-label">Duration</div><div class="detail-item-value">2.688s</div></div>
+        <div><div class="detail-item-label">Memory Limit</div><div class="detail-item-value">256 MB</div></div>
+        <div><div class="detail-item-label">CPU Limit</div><div class="detail-item-value">0.5 cores</div></div>
+        <div><div class="detail-item-label">Timeout</div><div class="detail-item-value">30s</div></div>
+        <div><div class="detail-item-label">Runtime</div><div class="detail-item-value">gVisor (runsc)</div></div>
+        <div><div class="detail-item-label">Network</div><div class="detail-item-value">HTTPS egress only</div></div>
+        <div><div class="detail-item-label">Target Results</div><div class="detail-item-value"><span class="tag">Accounting: 200 OK</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Failed Execution -->
+  <div class="exec-card" id="exec2">
+    <div class="exec-card-header"><div class="exec-card-left"><span class="gov-badge gov-badge-error">✕ Failed</span><div><div class="exec-card-title">WO-2024-0010 · Stark Industries</div><div class="exec-card-meta">14 Aug 2026 08:22 · 3 attempts exhausted</div></div></div><div style="display:flex;align-items:center;gap:var(--spacing-2)"><span class="badge badge-error">● Failed</span><span class="chevron">▼</span></div></div>
+    <div class="exec-card-body">
+      <div class="lifecycle"><span class="lifecycle-step failed">✕ Failed after 3 retries</span></div>
+      <div class="detail-grid">
+        <div><div class="detail-item-label">Final Error</div><div class="detail-item-value" style="color:var(--color-error)">ERP endpoint returned HTTP 503 Service Unavailable</div></div>
+        <div><div class="detail-item-label">Total Attempts</div><div class="detail-item-value">3 of 3</div></div>
+        <div><div class="detail-item-label">Backoff Policy</div><div class="detail-item-value">Exponential: 1s → 2s → 4s</div></div>
+      </div>
+      <div class="retry-section">
+        <div class="retry-title">Retry History</div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>#</th><th>Sandbox ID</th><th>Created</th><th>Destroyed</th><th>Error</th><th>Duration</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td style="font-family:var(--font-mono)">sbx-d4e1f2a3</td><td>08:22:55</td><td>08:22:58</td><td style="color:var(--color-error)">503 Service Unavailable</td><td>2.8s</td></tr>
+              <tr><td>2</td><td style="font-family:var(--font-mono)">sbx-e5f2a3b4</td><td>08:22:59</td><td>08:23:01</td><td style="color:var(--color-error)">503 Service Unavailable</td><td>2.1s</td></tr>
+              <tr><td>3</td><td style="font-family:var(--font-mono)">sbx-f6a3b4c5</td><td>08:23:03</td><td>08:23:06</td><td style="color:var(--color-error)">503 Service Unavailable</td><td>2.9s</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Another Success -->
+  <div class="exec-card" id="exec3">
+    <div class="exec-card-header"><div class="exec-card-left"><span class="gov-badge gov-badge-success">🛡 Isolated</span><div><div class="exec-card-title">WO-2024-0009 · Umbrella Corp</div><div class="exec-card-meta">13 Aug 2026 17:56 · Sandbox sbx-b8d4f3a2</div></div></div><div style="display:flex;align-items:center;gap:var(--spacing-2)"><span class="badge badge-success">● Success</span><span class="chevron">▼</span></div></div>
+    <div class="exec-card-body">
+      <div class="lifecycle"><span class="lifecycle-step active">✓ Created</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step active">✓ Executed</span><span class="lifecycle-arrow">→</span><span class="lifecycle-step active">✓ Destroyed</span></div>
+      <div class="detail-grid">
+        <div><div class="detail-item-label">Sandbox ID</div><div class="detail-item-value" style="font-family:var(--font-mono)">sbx-b8d4f3a2</div></div>
+        <div><div class="detail-item-label">Duration</div><div class="detail-item-value">3.102s</div></div>
+        <div><div class="detail-item-label">Target Results</div><div class="detail-item-value"><span class="tag">ERP: 200</span> <span class="tag">Accounting: 201</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var isDark=false;
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    isDark=!isDark;
+    if(isDark){document.documentElement.setAttribute('data-theme','dark');this.textContent='🌙';}
+    else{document.documentElement.removeAttribute('data-theme');this.textContent='☀';}
+  });
+  document.querySelectorAll('.exec-card-header').forEach(function(h){
+    h.addEventListener('click',function(){h.parentElement.classList.toggle('open');});
+  });
+})();
+</script>
+</body>
+</html>

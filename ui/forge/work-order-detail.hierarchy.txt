@@ -1,0 +1,23 @@
+```
+WorkOrderDetailPage
+├── ThemeToggle
+├── Breadcrumbs
+├── WorkOrderHeader
+│   ├── Title + StatusBadge
+│   ├── MetaInfo (record, source, targets, timestamp)
+│   └── ActionButtons (Approve, Reject, Amend)
+├── RoleNotice (for non-Approvers, hidden by default)
+├── SourceChangeSummary
+│   └── SummaryGrid
+├── TargetSystemTabs
+│   ├── TabButton: ERP
+│   └── TabButton: Accounting
+├── TabPanel: ERP
+│   └── FieldDiffTable (field, before, after, rule)
+├── TabPanel: Accounting
+│   └── FieldDiffTable
+├── ApproveConfirmModal
+├── RejectModal (with reason textarea)
+├── AmendModal (with notes textarea)
+└── ToastNotification
+```

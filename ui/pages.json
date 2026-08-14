@@ -2,41 +2,49 @@
   {
     "name": "Design System",
     "file": "design-system.html",
-    "description": "Visual component library, typography, color palette, and design tokens for Ledgerline. Serves as the canonical style reference for all application screens."
+    "description": "Visual component library, typography, color palette, and design tokens for Ledgerline. Serves as the canonical style reference for all application screens.",
+    "status": "static mockup"
   },
   {
     "name": "Login",
     "file": "login.html",
-    "description": "Authentication page with OAuth 2.0/PKCE login flow and TOTP MFA challenge for Approver-role users. Supports error states, loading states, and session timeout re-authentication."
+    "description": "Authentication page with OAuth 2.0/PKCE login flow and TOTP MFA challenge for Approver-role users. Supports error states, loading states, and session timeout re-authentication.",
+    "status": "static mockup"
   },
   {
     "name": "Dashboard",
     "file": "dashboard.html",
-    "description": "Operations Coordinator's primary view showing real-time aggregated work order counts by status, a live change detection feed, and a work orders table with filtering. This is the single-pane-of-glass overview."
+    "description": "Operations Coordinator's primary view showing real-time aggregated work order counts by status, a live change detection feed, and a work orders table with filtering. This is the single-pane-of-glass overview.",
+    "status": "static mockup"
   },
   {
     "name": "Work Order Detail",
     "file": "work-order-detail.html",
-    "description": "Finance/AP Reviewer's primary decision-making screen showing full field-level detail for a pending work order, with Approve/Reject/Amend actions. Shows per-target-system before/after values and derivation rules."
+    "description": "Finance/AP Reviewer's primary decision-making screen showing full field-level detail for a pending work order, with Approve/Reject/Amend actions. Shows per-target-system before/after values and derivation rules.",
+    "status": "static mockup"
   },
   {
     "name": "Audit Trail",
     "file": "audit-trail.html",
-    "description": "Compliance/Audit Observer's read-only interface for searching, filtering, and browsing the immutable audit trail. Supports expanding entries to see full event payloads and exporting records as JSON or CSV."
+    "description": "Compliance/Audit Observer's read-only interface for searching, filtering, and browsing the immutable audit trail. Supports expanding entries to see full event payloads and exporting records as JSON or CSV.",
+    "status": "wired to the API"
   },
   {
     "name": "Sandbox Execution Log",
     "file": "sandbox-execution-log.html",
-    "description": "IT Owner's view showing sandbox lifecycle details (created \u2192 executed \u2192 destroyed) for each executed work order, including sandbox ID, timestamps, resource limits, and retry history for failed executions."
+    "description": "IT Owner's view showing sandbox lifecycle details (created \u2192 executed \u2192 destroyed) for each executed work order, including sandbox ID, timestamps, resource limits, and retry history for failed executions.",
+    "status": "static mockup"
   },
   {
     "name": "Work Orders List",
     "file": "work-orders-list.html",
-    "description": "Comprehensive list view of all work orders with advanced filtering, sorting, and status indicators. Serves as the primary navigation hub for reviewers to find and act on work orders."
+    "description": "Comprehensive list view of all work orders with advanced filtering, sorting, and status indicators. Serves as the primary navigation hub for reviewers to find and act on work orders.",
+    "status": "static mockup"
   },
   {
     "name": "Session Timeout Warning",
     "file": "session-timeout-warning.html",
-    "description": "Modal overlay shown 5 minutes before session expiry, allowing users to extend or end their session. Implements the 30-minute inactivity / 8-hour absolute timeout policy."
+    "description": "Modal overlay shown 5 minutes before session expiry, allowing users to extend or end their session. Implements the 30-minute inactivity / 8-hour absolute timeout policy.",
+    "status": "static mockup"
   }
 ]

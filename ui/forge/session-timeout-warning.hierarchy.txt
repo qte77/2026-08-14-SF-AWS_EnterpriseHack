@@ -1,0 +1,12 @@
+```
+SessionTimeoutOverlay
+├── ModalOverlay
+└── SessionModal (role=alertdialog)
+    ├── WarningIcon
+    ├── Title
+    ├── Description
+    ├── CountdownTimer (aria-live)
+    └── Actions
+        ├── LogOutButton
+        └── ExtendSessionButton
+```

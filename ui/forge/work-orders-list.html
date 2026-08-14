@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ledgerline — Work Orders</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--color-primary:#0f62fe;--color-primary-hover:#0353e9;--color-bg:#ffffff;--color-surface:#f4f4f4;--color-surface-hover:#e8e8e8;--color-surface-raised:#ffffff;--color-text-primary:#161616;--color-text-secondary:#525252;--color-text-muted:#8d8d8d;--color-text-inverse:#ffffff;--color-border:#e0e0e0;--color-border-strong:#8d8d8d;--color-success:#198038;--color-success-bg:#defbe6;--color-warning:#b28600;--color-warning-bg:#fdf6dd;--color-error:#da1e28;--color-error-bg:#fff1f1;--color-info:#0043ce;--color-info-bg:#edf5ff;--color-focus:#0f62fe;--font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono',Consolas,monospace;--font-size-xs:0.75rem;--font-size-sm:0.875rem;--font-size-base:1rem;--font-size-lg:1.125rem;--font-size-2xl:1.5rem;--font-weight-regular:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--spacing-1:4px;--spacing-2:8px;--spacing-3:12px;--spacing-4:16px;--spacing-6:24px;--spacing-8:32px;--spacing-12:48px;--shadow-sm:0 1px 2px rgba(0,0,0,0.05);--shadow-md:0 2px 6px rgba(0,0,0,0.08);--radius-sm:2px;--radius-md:4px;--radius-lg:8px;--radius-full:9999px;--transition-fast:120ms ease;--transition-normal:200ms ease;}
+[data-theme="dark"]{--color-primary:#78a9ff;--color-primary-hover:#a6c8ff;--color-bg:#161616;--color-surface:#262626;--color-surface-hover:#353535;--color-surface-raised:#393939;--color-text-primary:#f4f4f4;--color-text-secondary:#c6c6c6;--color-text-muted:#6f6f6f;--color-text-inverse:#161616;--color-border:#393939;--color-border-strong:#6f6f6f;--color-success:#42be65;--color-success-bg:#044317;--color-warning:#f1c21b;--color-warning-bg:#3a2f00;--color-error:#fa4d56;--color-error-bg:#470b0e;--color-info:#4589ff;--color-info-bg:#001d6c;--color-focus:#78a9ff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-family);font-size:var(--font-size-base);color:var(--color-text-primary);background:var(--color-bg);transition:background var(--transition-normal);}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:9999;width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-surface-raised);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:var(--shadow-sm);}
+.page-container{max-width:1200px;margin:0 auto;padding:var(--spacing-6) var(--spacing-8);}
+@media(max-width:768px){.page-container{padding:var(--spacing-4);}}
+.breadcrumbs{display:flex;align-items:center;gap:var(--spacing-1);font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--spacing-4);}
+.breadcrumbs a{color:var(--color-primary);text-decoration:none;}
+.breadcrumbs .sep{margin:0 var(--spacing-1);}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--spacing-4);flex-wrap:wrap;gap:var(--spacing-3);}
+.page-header h1{font-size:var(--font-size-2xl);font-weight:var(--font-weight-semibold);}
+
+/* Search bar */
+.search-bar{display:flex;gap:var(--spacing-3);margin-bottom:var(--spacing-4);flex-wrap:wrap;align-items:center;}
+.search-input{flex:1;min-width:200px;padding:var(--spacing-2) var(--spacing-3);font-family:var(--font-family);font-size:var(--font-size-sm);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);min-height:36px;}
+.search-input:focus{outline:none;border-color:var(--color-focus);box-shadow:0 0 0 1px var(--color-focus);}
+.filter-select{padding:var(--spacing-2) var(--spacing-3);font-family:var(--font-family);font-size:var(--font-size-sm);border:1px solid var(--color-border-strong);border-radius:var(--radius-md);background:var(--color-bg);color:var(--color-text-primary);min-height:36px;}
+
+/* Status tabs */
+.status-tabs{display:flex;gap:var(--spacing-1);margin-bottom:var(--spacing-4);flex-wrap:wrap;}
+.status-tab{padding:var(--spacing-1) var(--spacing-3);font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-surface-raised);color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-family);transition:all var(--transition-fast);}
+.status-tab:hover{background:var(--color-surface-hover);}
+.status-tab.active{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary);}
+
+/* Table */
+.table-wrapper{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-md);}
+table{width:100%;border-collapse:collapse;font-size:var(--font-size-sm);}
+th{text-align:left;padding:var(--spacing-3) var(--spacing-4);background:var(--color-surface);font-weight:var(--font-weight-semibold);color:var(--color-text-secondary);border-bottom:2px solid var(--color-border);white-space:nowrap;cursor:pointer;user-select:none;}
+th:hover{color:var(--color-text-primary);}
+td{padding:var(--spacing-3) var(--spacing-4);border-bottom:1px solid var(--color-border);}
+tbody tr{cursor:pointer;transition:background var(--transition-fast);}
+tbody tr:hover{background:var(--color-surface-hover);}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;font-size:var(--font-size-xs);font-weight:var(--font-weight-medium);border-radius:var(--radius-full);}
+.badge-info{background:var(--color-info-bg);color:var(--color-info);}
+.badge-success{background:var(--color-success-bg);color:var(--color-success);}
+.badge-warning{background:var(--color-warning-bg);color:var(--color-warning);}
+.badge-error{background:var(--color-error-bg);color:var(--color-error);}
+.badge-neutral{background:var(--color-surface);color:var(--color-text-secondary);}
+.tag{display:inline-flex;padding:1px 6px;font-size:var(--font-size-xs);background:var(--color-surface);color:var(--color-text-secondary);border-radius:var(--radius-sm);border:1px solid var(--color-border);}
+
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:var(--spacing-4);font-size:var(--font-size-sm);color:var(--color-text-secondary);flex-wrap:wrap;gap:var(--spacing-2);}
+.pagination-btns{display:flex;gap:var(--spacing-1);}
+.page-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-surface-raised);color:var(--color-text-primary);cursor:pointer;font-size:var(--font-size-sm);font-family:var(--font-family);}
+.page-btn:hover{background:var(--color-surface-hover);}
+.page-btn.active{background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary);}
+
+.empty-state{text-align:center;padding:var(--spacing-12);color:var(--color-text-muted);font-size:var(--font-size-sm);display:none;}
+.empty-state.visible{display:block;}
+
+/* Incomplete indicator */
+.incomplete-icon{color:var(--color-warning);font-size:var(--font-size-xs);}
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☀</button>
+
+<div class="page-container">
+  <nav class="breadcrumbs"><a href="#">Dashboard</a><span class="sep">/</span><span>Work Orders</span></nav>
+  <div class="page-header">
+    <h1>📋 Work Orders</h1>
+    <div style="font-size:var(--font-size-sm);color:var(--color-text-muted)">52 total work orders</div>
+  </div>
+
+  <div class="search-bar">
+    <input class="search-input" type="search" placeholder="Search by record name or work order ID…" id="searchInput">
+    <select class="filter-select" id="targetFilter"><option value="">All Targets</option><option>ERP</option><option>Accounting</option></select>
+  </div>
+
+  <div class="status-tabs" id="statusTabs">
+    <button class="status-tab active" data-filter="all">All (52)</button>
+    <button class="status-tab" data-filter="pending">Pending (3)</button>
+    <button class="status-tab" data-filter="synced">Synced (42)</button>
+    <button class="status-tab" data-filter="failed">Failed (1)</button>
+    <button class="status-tab" data-filter="rejected">Rejected (4)</button>
+    <button class="status-tab" data-filter="amended">Amended (2)</button>
+  </div>
+
+  <div class="table-wrapper" id="tableWrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Work Order ↕</th>
+          <th>Record Name ↕</th>
+          <th>Source</th>
+          <th>Targets</th>
+          <th>Status ↕</th>
+          <th>Reviewer</th>
+          <th>Fields Changed</th>
+          <th>Last Updated ↕</th>
+        </tr>
+      </thead>
+      <tbody id="woBody">
+        <tr data-status="pending"><td style="font-family:var(--font-mono)">WO-2024-0014</td><td>Acme Corp</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span> <span class="tag">Accounting</span></td><td><span class="badge badge-info">● Pending</span></td><td>—</td><td>billing_address, phone</td><td>14 Aug 09:32</td></tr>
+        <tr data-status="pending"><td style="font-family:var(--font-mono)">WO-2024-0013</td><td>Globex Industries</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span></td><td><span class="badge badge-info">● Pending</span></td><td>—</td><td>contact_email</td><td>14 Aug 09:28</td></tr>
+        <tr data-status="amended"><td style="font-family:var(--font-mono)">WO-2024-0012</td><td>Initech Ltd <span class="incomplete-icon" title="Incomplete: missing county field">⚠</span></td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span> <span class="tag">Accounting</span></td><td><span class="badge badge-warning">● Amended</span></td><td>J. Chen</td><td>billing_address</td><td>14 Aug 09:15</td></tr>
+        <tr data-status="synced"><td style="font-family:var(--font-mono)">WO-2024-0011</td><td>Wayne Enterprises</td><td><span class="tag">CRM</span></td><td><span class="tag">Accounting</span></td><td><span class="badge badge-success">● Synced</span></td><td>J. Chen</td><td>tax_id</td><td>14 Aug 08:47</td></tr>
+        <tr data-status="failed"><td style="font-family:var(--font-mono)">WO-2024-0010</td><td>Stark Industries</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span></td><td><span class="badge badge-error">● Failed</span></td><td>S. Patel</td><td>company_name, phone</td><td>14 Aug 08:22</td></tr>
+        <tr data-status="synced"><td style="font-family:var(--font-mono)">WO-2024-0009</td><td>Umbrella Corp</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span> <span class="tag">Accounting</span></td><td><span class="badge badge-success">● Synced</span></td><td>J. Chen</td><td>billing_address, tax_id</td><td>13 Aug 17:55</td></tr>
+        <tr data-status="rejected"><td style="font-family:var(--font-mono)">WO-2024-0008</td><td>Oscorp Ltd</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span></td><td><span class="badge badge-neutral">● Rejected</span></td><td>J. Chen</td><td>tax_id</td><td>13 Aug 16:30</td></tr>
+        <tr data-status="pending"><td style="font-family:var(--font-mono)">WO-2024-0007</td><td>Cyberdyne Systems</td><td><span class="tag">CRM</span></td><td><span class="tag">Accounting</span></td><td><span class="badge badge-info">● Pending</span></td><td>—</td><td>contact_email, phone</td><td>13 Aug 15:12</td></tr>
+        <tr data-status="amended"><td style="font-family:var(--font-mono)">WO-2024-0006</td><td>LexCorp</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span> <span class="tag">Accounting</span></td><td><span class="badge badge-warning">● Amended</span></td><td>S. Patel</td><td>billing_address</td><td>13 Aug 14:45</td></tr>
+        <tr data-status="synced"><td style="font-family:var(--font-mono)">WO-2024-0005</td><td>Weyland-Yutani</td><td><span class="tag">CRM</span></td><td><span class="tag">ERP</span></td><td><span class="badge badge-success">● Synced</span></td><td>J. Chen</td><td>company_name</td><td>13 Aug 12:08</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="empty-state" id="emptyState">No work orders match your filters.</div>
+
+  <div class="pagination">
+    <span>Page 1 of 6</span>
+    <div class="pagination-btns">
+      <button class="page-btn" disabled>‹</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">…</button>
+      <button class="page-btn">6</button>
+      <button class="page-btn">›</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var isDark=false;
+  document.getElementById('themeToggle').addEventListener('click',function(){
+    isDark=!isDark;
+    if(isDark){document.documentElement.setAttribute('data-theme','dark');this.textContent='🌙';}
+    else{document.documentElement.removeAttribute('data-theme');this.textContent='☀';}
+  });
+
+  // Status tabs
+  var tabs=document.querySelectorAll('.status-tab');
+  var rows=document.querySelectorAll('#woBody tr');
+  var emptyState=document.getElementById('emptyState');
+  var tableWrapper=document.getElementById('tableWrapper');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click',function(){
+      tabs.forEach(function(t){t.classList.remove('active');});
+      tab.classList.add('active');
+      var f=tab.getAttribute('data-filter');
+      var visible=0;
+      rows.forEach(function(r){
+        if(f==='all'||r.getAttribute('data-status')===f){r.style.display='';visible++;}
+        else r.style.display='none';
+      });
+      if(visible===0){emptyState.classList.add('visible');tableWrapper.style.display='none';}
+      else{emptyState.classList.remove('visible');tableWrapper.style.display='';}
+    });
+  });
+
+  // Search
+  document.getElementById('searchInput').addEventListener('input',function(){
+    var q=this.value.toLowerCase();
+    rows.forEach(function(r){
+      var text=r.textContent.toLowerCase();
+      r.style.display=text.includes(q)?'':'none';
+    });
+  });
+
+  // Row click
+  rows.forEach(function(r){
+    r.addEventListener('click',function(){
+      alert('Navigate to: '+r.querySelector('td').textContent);
+    });
+  });
+
+  // Pagination
+  document.querySelectorAll('.page-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      if(btn.disabled)return;
+      document.querySelectorAll('.page-btn').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+    });
+  });
+})();
+</script>
+</body>
+</html>
