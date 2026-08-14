@@ -1,0 +1,364 @@
+{
+  "captured_at": "2026-08-14T23:11:32+00:00",
+  "note": "A real recorded run: real Daytona sandboxes, real approval, real rejection. Served so the published page works with no backend. Append ?api=<url> to read a live instance.",
+  "audit": {
+    "chain": {
+      "intact": true,
+      "head": "02bad0534fa68879a1a57a0f914da48f34c93da76a7c95cc707d117dcead553a"
+    },
+    "entries": [
+      {
+        "seq": 10,
+        "ts": "2026-08-14T23:11:32+00:00",
+        "event": "work_order.rejected",
+        "work_order_id": "WO-86CD9F81",
+        "actor": "reviewer@ledgerline",
+        "detail": {
+          "reason": "Billing address needs finance sign-off first"
+        },
+        "prev_hash": "d6c0bfacce759ab8e3afa38f6972cdd12a8ce4df25ab05dabb5d966e164e0388",
+        "hash": "02bad0534fa68879a1a57a0f914da48f34c93da76a7c95cc707d117dcead553a"
+      },
+      {
+        "seq": 9,
+        "ts": "2026-08-14T23:11:32+00:00",
+        "event": "work_order.synced",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "agent",
+        "detail": {
+          "fields": {
+            "business_partner_name": "Nordwind Logistik GmbH",
+            "contact_email": "ap@nordwind-logistik.de",
+            "credit_limit_eur": 250000,
+            "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+            "tax_number": "DE811907980"
+          },
+          "target": "erp"
+        },
+        "prev_hash": "a36f7385dde43746b7c8cc1e4157f6d4c801a6dfa9362fd50a8d60f759b114b9",
+        "hash": "d6c0bfacce759ab8e3afa38f6972cdd12a8ce4df25ab05dabb5d966e164e0388"
+      },
+      {
+        "seq": 8,
+        "ts": "2026-08-14T23:11:32+00:00",
+        "event": "write.executed",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "sandbox",
+        "detail": {
+          "fields": {
+            "business_partner_name": "Nordwind Logistik GmbH",
+            "contact_email": "ap@nordwind-logistik.de",
+            "credit_limit_eur": 250000,
+            "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+            "tax_number": "DE811907980"
+          },
+          "record_id": "CUST-4471",
+          "system": "erp"
+        },
+        "prev_hash": "8131a9171afb453cba100ccf4b0e125b476d53c3939d52edff51e776fb0ba2e2",
+        "hash": "a36f7385dde43746b7c8cc1e4157f6d4c801a6dfa9362fd50a8d60f759b114b9"
+      },
+      {
+        "seq": 7,
+        "ts": "2026-08-14T23:11:32+00:00",
+        "event": "sandbox.destroyed",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "agent",
+        "detail": {
+          "at": "2026-08-14T23:11:32+00:00",
+          "daytona_says": {
+            "endpoint": "GET /sandbox/cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+            "http_status": 200,
+            "organization_id": "41484d9a-e2cc-45ab-bc05-8135e3e01d7f",
+            "snapshot": "daytonaio/sandbox:0.8.0",
+            "state": "destroying",
+            "target": "us"
+          },
+          "sandbox_id": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf"
+        },
+        "prev_hash": "1ad6f1fde29fc10f9d5987962001931342f6ba15dc68420d6f479161a78560d0",
+        "hash": "8131a9171afb453cba100ccf4b0e125b476d53c3939d52edff51e776fb0ba2e2"
+      },
+      {
+        "seq": 6,
+        "ts": "2026-08-14T23:11:32+00:00",
+        "event": "sandbox.created",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "agent",
+        "detail": {
+          "at": "2026-08-14T23:11:31+00:00",
+          "daytona_says": {
+            "endpoint": "GET /sandbox/cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+            "http_status": 200,
+            "organization_id": "41484d9a-e2cc-45ab-bc05-8135e3e01d7f",
+            "snapshot": "daytonaio/sandbox:0.8.0",
+            "state": "started",
+            "target": "us"
+          },
+          "executed_on": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf | Linux-6.17.0-35-generic-x86_64-with-glibc2.41 | /home/daytona",
+          "sandbox_id": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf"
+        },
+        "prev_hash": "61fbdfa8001e9a20cccb9e1cd961dc9dbe5d0d0511f3d9fdd63d9991961a25af",
+        "hash": "1ad6f1fde29fc10f9d5987962001931342f6ba15dc68420d6f479161a78560d0"
+      },
+      {
+        "seq": 5,
+        "ts": "2026-08-14T23:11:30+00:00",
+        "event": "work_order.approved",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "reviewer@ledgerline",
+        "detail": {
+          "code_sha256": "acf43347f96b57cf0f45d23e397fa54e55b9bde646037f3aece49276056f0279",
+          "payload": {
+            "business_partner_name": "Nordwind Logistik GmbH",
+            "contact_email": "ap@nordwind-logistik.de",
+            "credit_limit_eur": 250000,
+            "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+            "tax_number": "DE811907980"
+          },
+          "target": "erp"
+        },
+        "prev_hash": "f5cef9e8f6d341b3ca2d6384f34471ad7ac40c51ae42ff31358dfc9f6bcc49e1",
+        "hash": "61fbdfa8001e9a20cccb9e1cd961dc9dbe5d0d0511f3d9fdd63d9991961a25af"
+      },
+      {
+        "seq": 4,
+        "ts": "2026-08-14T23:11:30+00:00",
+        "event": "write.denied",
+        "work_order_id": null,
+        "actor": "system",
+        "detail": {
+          "reason": "no valid authorised work order token",
+          "record_id": "CUST-4471",
+          "system": "erp"
+        },
+        "prev_hash": "fcf4e36a094220dc650e287ccb38cf020beca691c8196e874458bdb0610180e4",
+        "hash": "f5cef9e8f6d341b3ca2d6384f34471ad7ac40c51ae42ff31358dfc9f6bcc49e1"
+      },
+      {
+        "seq": 3,
+        "ts": "2026-08-14T23:11:30+00:00",
+        "event": "work_order.derived",
+        "work_order_id": "WO-86CD9F81",
+        "actor": "agent",
+        "detail": {
+          "diff": {
+            "account_name": {
+              "after": "Nordwind Logistik GmbH",
+              "before": null
+            },
+            "billing_address": {
+              "after": "Speicherstadt 12, 20457 Hamburg",
+              "before": null
+            },
+            "billing_email": {
+              "after": "ap@nordwind-logistik.de",
+              "before": null
+            },
+            "tax_registration": {
+              "after": "DE811907980",
+              "before": null
+            }
+          },
+          "rationale": "Accounting holds the billing view of this customer; the field is mapped from the CRM master record via the shared Customer schema. Not carried by this system, left unchanged: credit_limit.",
+          "record_id": "CUST-4471",
+          "target": "accounting"
+        },
+        "prev_hash": "ba411d65a4cf4dc6fef6e56f8a882619e4a1f68b0d41bce21c1b6ad612ca3d2a",
+        "hash": "fcf4e36a094220dc650e287ccb38cf020beca691c8196e874458bdb0610180e4"
+      },
+      {
+        "seq": 2,
+        "ts": "2026-08-14T23:11:30+00:00",
+        "event": "work_order.derived",
+        "work_order_id": "WO-BE6BC263",
+        "actor": "agent",
+        "detail": {
+          "diff": {
+            "business_partner_name": {
+              "after": "Nordwind Logistik GmbH",
+              "before": null
+            },
+            "contact_email": {
+              "after": "ap@nordwind-logistik.de",
+              "before": null
+            },
+            "credit_limit_eur": {
+              "after": 250000,
+              "before": null
+            },
+            "ship_to_address": {
+              "after": "Speicherstadt 12, 20457 Hamburg",
+              "before": null
+            },
+            "tax_number": {
+              "after": "DE811907980",
+              "before": null
+            }
+          },
+          "rationale": "ERP holds the fulfilment view of this customer; the field is mapped from the CRM master record via the shared Customer schema.",
+          "record_id": "CUST-4471",
+          "target": "erp"
+        },
+        "prev_hash": "c60693a2f68108147f51e494bb596e48c5341aee93ba32835e3bacff6fcd8e31",
+        "hash": "ba411d65a4cf4dc6fef6e56f8a882619e4a1f68b0d41bce21c1b6ad612ca3d2a"
+      },
+      {
+        "seq": 1,
+        "ts": "2026-08-14T23:11:30+00:00",
+        "event": "change.detected",
+        "work_order_id": null,
+        "actor": "crm",
+        "detail": {
+          "changed": [
+            "billing_address",
+            "credit_limit",
+            "email",
+            "name",
+            "vat_id"
+          ],
+          "record_id": "CUST-4471"
+        },
+        "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "c60693a2f68108147f51e494bb596e48c5341aee93ba32835e3bacff6fcd8e31"
+      }
+    ]
+  },
+  "traces": {
+    "erp/CUST-4471": {
+      "record": {
+        "system": "erp",
+        "record_id": "CUST-4471",
+        "business_partner_name": "Nordwind Logistik GmbH",
+        "contact_email": "ap@nordwind-logistik.de",
+        "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+        "tax_number": "DE811907980",
+        "credit_limit_eur": 250000
+      },
+      "authorised_by": [
+        {
+          "id": "WO-BE6BC263",
+          "record_id": "CUST-4471",
+          "source_system": "crm",
+          "target_system": "erp",
+          "diff": {
+            "business_partner_name": {
+              "before": null,
+              "after": "Nordwind Logistik GmbH"
+            },
+            "contact_email": {
+              "before": null,
+              "after": "ap@nordwind-logistik.de"
+            },
+            "ship_to_address": {
+              "before": null,
+              "after": "Speicherstadt 12, 20457 Hamburg"
+            },
+            "tax_number": {
+              "before": null,
+              "after": "DE811907980"
+            },
+            "credit_limit_eur": {
+              "before": null,
+              "after": 250000
+            }
+          },
+          "payload": {
+            "business_partner_name": "Nordwind Logistik GmbH",
+            "contact_email": "ap@nordwind-logistik.de",
+            "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+            "tax_number": "DE811907980",
+            "credit_limit_eur": 250000
+          },
+          "rationale": "ERP holds the fulfilment view of this customer; the field is mapped from the CRM master record via the shared Customer schema.",
+          "status": "SYNCED",
+          "version": 1,
+          "created_at": "2026-08-14T23:11:30+00:00",
+          "decided_at": "2026-08-14T23:11:30+00:00",
+          "decided_by": "reviewer@ledgerline",
+          "decision_note": "Verified against CRM master",
+          "sandbox_id": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+          "code": "# Ledgerline generated integration code\n# work order : WO-BE6BC263\n# target     : erp\n# record     : CUST-4471\n#\n# Runs inside a disposable Daytona sandbox created for this order.\n# It transforms the authorised payload and emits it; it holds no\n# credential and opens no connection of its own.\nimport json\n\nRECORD_ID = 'CUST-4471'\nPAYLOAD = {\n    'business_partner_name': 'Nordwind Logistik GmbH',\n    'contact_email': 'ap@nordwind-logistik.de',\n    'ship_to_address': 'Speicherstadt 12, 20457 Hamburg',\n    'tax_number': 'DE811907980',\n    'credit_limit_eur': 250000,\n}\n\ndef transform(payload):\n    out = {}\n    for field, value in payload.items():\n        out[field] = value.strip() if isinstance(value, str) else value\n    return out\n\nresult = {\"record_id\": RECORD_ID, \"fields\": transform(PAYLOAD)}\nprint(\"LEDGERLINE_RESULT \" + json.dumps(result))\n",
+          "sandbox_log": {
+            "sandbox_id": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+            "created_at": "2026-08-14T23:11:31+00:00",
+            "proof_alive": {
+              "endpoint": "GET /sandbox/cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+              "http_status": 200,
+              "state": "started",
+              "organization_id": "41484d9a-e2cc-45ab-bc05-8135e3e01d7f",
+              "target": "us",
+              "snapshot": "daytonaio/sandbox:0.8.0"
+            },
+            "executed_on": "cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf | Linux-6.17.0-35-generic-x86_64-with-glibc2.41 | /home/daytona",
+            "ok": true,
+            "result": {
+              "record_id": "CUST-4471",
+              "fields": {
+                "business_partner_name": "Nordwind Logistik GmbH",
+                "contact_email": "ap@nordwind-logistik.de",
+                "ship_to_address": "Speicherstadt 12, 20457 Hamburg",
+                "tax_number": "DE811907980",
+                "credit_limit_eur": 250000
+              }
+            },
+            "stdout": "LEDGERLINE_RESULT {\"record_id\": \"CUST-4471\", \"fields\": {\"business_partner_name\": \"Nordwind Logistik GmbH\", \"contact_email\": \"ap@nordwind-logistik.de\", \"ship_to_address\": \"Speicherstadt 12, 20457 Hamburg\", \"tax_number\": \"DE811907980\", \"credit_limit_eur\": 250000}}\n",
+            "proof_destroyed": {
+              "endpoint": "GET /sandbox/cd4ecf2a-5c16-4af2-b85b-ef562bdb25bf",
+              "http_status": 200,
+              "state": "destroying",
+              "organization_id": "41484d9a-e2cc-45ab-bc05-8135e3e01d7f",
+              "target": "us",
+              "snapshot": "daytonaio/sandbox:0.8.0"
+            },
+            "destroyed_at": "2026-08-14T23:11:32+00:00"
+          }
+        }
+      ],
+      "audit": [
+        {
+          "seq": 2,
+          "ts": "2026-08-14T23:11:30+00:00",
+          "event": "work_order.derived",
+          "actor": "agent",
+          "hash": "ba411d65a4cf4dc6fef6e56f8a882619e4a1f68b0d41bce21c1b6ad612ca3d2a"
+        },
+        {
+          "seq": 5,
+          "ts": "2026-08-14T23:11:30+00:00",
+          "event": "work_order.approved",
+          "actor": "reviewer@ledgerline",
+          "hash": "61fbdfa8001e9a20cccb9e1cd961dc9dbe5d0d0511f3d9fdd63d9991961a25af"
+        },
+        {
+          "seq": 6,
+          "ts": "2026-08-14T23:11:32+00:00",
+          "event": "sandbox.created",
+          "actor": "agent",
+          "hash": "1ad6f1fde29fc10f9d5987962001931342f6ba15dc68420d6f479161a78560d0"
+        },
+        {
+          "seq": 7,
+          "ts": "2026-08-14T23:11:32+00:00",
+          "event": "sandbox.destroyed",
+          "actor": "agent",
+          "hash": "8131a9171afb453cba100ccf4b0e125b476d53c3939d52edff51e776fb0ba2e2"
+        },
+        {
+          "seq": 8,
+          "ts": "2026-08-14T23:11:32+00:00",
+          "event": "write.executed",
+          "actor": "sandbox",
+          "hash": "a36f7385dde43746b7c8cc1e4157f6d4c801a6dfa9362fd50a8d60f759b114b9"
+        },
+        {
+          "seq": 9,
+          "ts": "2026-08-14T23:11:32+00:00",
+          "event": "work_order.synced",
+          "actor": "agent",
+          "hash": "d6c0bfacce759ab8e3afa38f6972cdd12a8ce4df25ab05dabb5d966e164e0388"
+        }
+      ]
+    }
+  }
+}

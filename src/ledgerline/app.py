@@ -72,7 +72,12 @@ def _load_env() -> dict[str, str]:
 ENV = _load_env()
 DAYTONA_API_KEY = ENV.get("DAYTONA_API_KEY", "")
 DAYTONA_API_URL = ENV.get("DAYTONA_API_URL", "https://app.daytona.io/api")
-WEBHOOK_SECRET = ENV.get("WEBHOOK_SECRET", "ledgerline-dev-secret")
+# This secret signs the write tokens, and a write token is the only thing standing
+# between a caller and a downstream system of record. A committed default would be a
+# published signing key, so an unset secret gets a random one per process instead:
+# forgery stays impossible, and the failure mode is tokens not surviving a restart —
+# loud and local, rather than silent and exploitable.
+WEBHOOK_SECRET = ENV.get("WEBHOOK_SECRET") or secrets.token_hex(32)
 
 
 # --------------------------------------------------------------------------
