@@ -252,5 +252,27 @@ background:var(--color-surface,#f4f4f4);color:var(--color-text-muted,#8d8d8d)}
   });
 })();
 </script>
-</body>
+<!-- ledgerline:sidebar -->
+<script>
+(function(){
+  var MAP = {
+    dashboard: 'dashboard.html',
+    workorders: 'work-orders-list.html',
+    pending: 'work-orders-list.html',
+    approved: 'work-orders-list.html',
+    audit: 'audit-trail.html',
+    sandbox: 'sandbox-execution-log.html'
+  };
+  var here = location.pathname.split('/').pop();
+  if (!here || here === 'index.html') here = 'dashboard.html';
+  Array.prototype.forEach.call(document.querySelectorAll('.nav-item[data-page]'), function(btn){
+    var target = MAP[btn.getAttribute('data-page')];
+    if (!target) return;
+    btn.style.cursor = 'pointer';
+    if (target === here) btn.classList.add('active');
+    btn.addEventListener('click', function(){ location.href = target; });
+  });
+})();
+</script>
+<!-- /ledgerline:sidebar --></body>
 </html>
