@@ -122,6 +122,32 @@ rather than presented as neutral fact.
 
 ---
 
+## Run it
+
+```bash
+uv venv && uv pip install -e .        # Python 3.12+
+cp .env.example .env                  # add DAYTONA_API_KEY + DAYTONA_API_URL
+bash scripts/restart.sh               # serves on http://127.0.0.1:8000
+uv run python scripts/e2e.py          # the eight success criteria, executable
+```
+
+`/` lists the eight Forge-designed screens and the live API. The end-to-end run
+creates a real Daytona sandbox per authorised work order and destroys it after.
+
+| Endpoint | What |
+|---|---|
+| `POST /systems/crm/records/{id}` | Edit the source of truth — this is the trigger |
+| `GET /api/v1/workorders` | Derived orders with field diffs, rationale, and the code to run |
+| `POST /api/v1/workorders/{id}/approve` | Authorise, execute in a sandbox, write downstream |
+| `POST /api/v1/workorders/{id}/reject` | Refuse, with a reason, recorded permanently |
+| `GET /api/v1/audit` | Append-only trail with SHA-256 chain verification |
+| `GET /api/v1/audit/trace/{system}/{id}` | A written record back to its authorising order |
+
+`POST /systems/erp/records/{id}` without a token minted by an approval returns
+**403**. That is the product's central invariant, enforced in the write path.
+
+---
+
 ## Repo map
 
 | Path | What |
@@ -131,6 +157,10 @@ rather than presented as neutral fact.
 | `docs/estate-correlation.md` | Ingest analysis: hackathon reference architecture and judging criteria |
 | `docs/plans/0001-governed-sync-agent.md` | Build plan, remaining-work table, open decisions |
 | `docs/handoffs/0001-governed-sync-agent.md` | Session handoff |
+| `docs/SoftwareForge.ai-EnterpriseHack-SF/` | Forge pipeline output: Intent, BRD, PRD, Architecture, UI Design |
+| `src/ledgerline/app.py` | The agent: detection, derivation, authorisation, sandboxed execution, audit |
+| `ui/` | The eight Forge-designed screens, extracted from `UI_Design.md` |
+| `scripts/e2e.py` | The eight success criteria as executable checks |
 | `assets/` | Problem statement |
 
 ---

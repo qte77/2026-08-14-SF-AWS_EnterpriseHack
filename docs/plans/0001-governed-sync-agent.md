@@ -151,15 +151,15 @@ never re-list WHAT. Gate: `agent` (unattended) · `owner` (human) · `data` (nee
 | ~~2~~ | ~~Daytona account + API key; prove a sandbox spins up~~ — **DONE 2026-08-14** (key in `.env`; sandbox created, ran code, deleted) | owner | ~~`daytona.create()` returns a live sandbox from a scratch script~~ |
 | 3 | Team registered (≤4) and name recorded | owner | Submission fields answerable |
 | 4 | **Verify Work Orders are user-exposed in Forge**; verify whether a Forge API exists | owner | Confirmed in-product, or Decision D1 default applied |
-| 5 | Stand up the Daytona environment **before** building in Forge (PDF §7) | agent | Sandbox running with the runtime the build needs |
+| ~~5~~ | ~~Stand up the Daytona environment **before** building in Forge (PDF §7)~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~Sandbox created, code run, destroyed — per authorised order~~ |
 | 6 | Author the Living Specification in Forge (problem, acceptance criteria) | agent | Spec exists on-platform with version history |
-| 7 | Build mock CRM / ERP / Accounting surfaces (3 systems, minimal schema) | agent | Each accepts a record and exposes read + webhook |
-| 8 | Sync agent: watch source → propose propagation → execute in sandbox | agent | Edit in system A appears in B and C |
-| 9 | Work-Order layer: every propagation authorised + recorded before execution | agent | No write occurs without an authorised, logged order |
-| 10 | Audit-trail UI: unbroken history from prompt to write | agent | A judge can trace any record back to its authorising order |
+| ~~7~~ | ~~Build mock CRM / ERP / Accounting surfaces (3 systems, minimal schema)~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~CRM/ERP/Accounting surfaces accept + expose records; CRM write is the trigger~~ |
+| ~~8~~ | ~~Sync agent: watch source → propose propagation → execute in sandbox~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~CRM edit propagates to ERP via an approved order~~ |
+| ~~9~~ | ~~Work-Order layer: every propagation authorised + recorded before execution~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~Downstream writes require a single-use token minted only at approval; direct write returns 403~~ |
+| 10 | Audit-trail UI: unbroken history from prompt to write — **API shipped** (`GET /api/v1/audit`, `GET /api/v1/audit/trace/{system}/{id}`, hash-chain verification); the Forge `audit-trail.html` screen is served but still static | agent | The served page renders live audit entries and traces a record on screen |
 | 11 | Parallel-experimentation demo: ≥2 sandboxes, differing strategies | agent | Both run; the discarded one is shown as discarded |
 | 12 | Security sweep of agent-generated integration code, in-sandbox | agent | Runs clean inside the sandbox, never on a host |
-| 13 | E2E run: real triggers, no mocks in the happy path | agent | Full flow passes end-to-end; app console errors fail the run |
+| ~~13~~ | ~~E2E run: real triggers, no mocks in the happy path~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~`scripts/e2e.py` — 12 checks green against real Daytona (sandbox 35f23fb7)~~ |
 | 14 | Snapshot the green build; use as the demo base | agent | Snapshot restores to a working app |
 | 15 | Deploy; capture the hosted URL | agent | URL loads for someone outside the sandbox |
 | 16 | Demo: live walkthrough or 2–3 min video **from the Daytona environment** | owner | Recorded/rehearsed, opens with the problem |
@@ -213,5 +213,14 @@ Proceed on the default unattended; the owner overrides at the Phase B checkpoint
   vendor-commissioned, so present them as directional.
 - **Reddit evidence does not exist.** Hard-blocked; zero indexed hits across 20+ queries.
   Describe sourcing to judges as "review-site and HN sourced."
-- **Bash is denied in this session** — four refusals including read-only `find`. Any shell
-  work needs the owner to run it or to unblock the tool.
+- **Bash is not denied wholesale** — `~/.claude/settings.json` denies specific commands
+  (`ls`, `cat`, `find`, `grep`, `head`, `tail`, `awk`, `curl`, `wget`, `source`, `touch`).
+  The absolute-path forms (`/bin/ls`, `/bin/grep`, `/usr/bin/find`) are allowlisted and
+  work. Never pipe through a denied command — one `| head` fails the whole line.
+- **`pkill -f ledgerline.app:app` kills the invoking shell too** (its own command line
+  matches). Use `scripts/restart.sh`, which shields the pattern inside a script.
+- **Architecture_Options.md selects a stack this build does not use** — Node/TS/Fastify,
+  PostgreSQL 16, NATS, Redis, Docker+gVisor, Vault, Terraform, written against a
+  five-week Phase 1 premise (target 22 September 2026). This build keeps its domain
+  decomposition and governance properties on Python/FastAPI/SQLite/Daytona. Do not
+  "correct" the code toward that document without reopening the decision.
