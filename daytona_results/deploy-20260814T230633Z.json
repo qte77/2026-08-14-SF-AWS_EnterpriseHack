@@ -1,0 +1,18 @@
+{
+  "deployed_at": "2026-08-14T23:06:33Z",
+  "hosted_url": "https://8000-8cff584c-c83c-45cb-a1c8-8b8767705f72.daytonaproxy01.net",
+  "sandbox_id": "8cff584c-c83c-45cb-a1c8-8b8767705f72",
+  "organization_id": "41484d9a-e2cc-45ab-bc05-8135e3e01d7f",
+  "target": "us",
+  "snapshot": "ledgerline-b312e26-230625",
+  "commit": "b312e261c63947a380c59aab0fa5aa5692f3f042",
+  "branch": "main",
+  "python": "Python 3.14.4",
+  "port": 8000,
+  "public": true,
+  "smoke_checks": {
+    "/": "200",
+    "/ui/audit-trail.html": "200",
+    "/api/v1/workorders": "200"
+  }
+}

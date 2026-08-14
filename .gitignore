@@ -30,3 +30,6 @@ build/
 
 # Local ledger (rebuilt on each run)
 ledgerline.db
+
+# Generated Pages bundle
+_site/

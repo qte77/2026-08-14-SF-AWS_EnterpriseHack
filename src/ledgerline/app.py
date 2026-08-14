@@ -37,6 +37,7 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -368,6 +369,19 @@ def run_in_sandbox(code: str, hold_seconds: int = 0) -> dict[str, Any]:
 # --------------------------------------------------------------------------
 
 app = FastAPI(title="Ledgerline", version="0.1.0")
+
+# The screens are also published to GitHub Pages, which is a different origin
+# from whichever Daytona sandbox is currently serving the API. Nothing here is
+# credentialed — there are no cookies and no browser-held secrets — so an open
+# CORS policy costs nothing and keeps the Pages link usable against any deploy.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 init_db()
 
 
