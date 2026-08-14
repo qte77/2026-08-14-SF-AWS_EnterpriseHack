@@ -156,15 +156,15 @@ never re-list WHAT. Gate: `agent` (unattended) · `owner` (human) · `data` (nee
 | ~~7~~ | ~~Build mock CRM / ERP / Accounting surfaces (3 systems, minimal schema)~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~CRM/ERP/Accounting surfaces accept + expose records; CRM write is the trigger~~ |
 | ~~8~~ | ~~Sync agent: watch source → propose propagation → execute in sandbox~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~CRM edit propagates to ERP via an approved order~~ |
 | ~~9~~ | ~~Work-Order layer: every propagation authorised + recorded before execution~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~Downstream writes require a single-use token minted only at approval; direct write returns 403~~ |
-| 10 | Audit-trail UI: unbroken history from prompt to write — **API shipped** (`GET /api/v1/audit`, `GET /api/v1/audit/trace/{system}/{id}`, hash-chain verification); the Forge `audit-trail.html` screen is served but still static | agent | The served page renders live audit entries and traces a record on screen |
+| ~~10~~ | ~~Audit-trail UI: unbroken history from prompt to write~~ — **DONE 2026-08-14 (#1)** | agent | ~~Screen renders live entries, verifies the chain, and traces a record on screen; 17 browser checks green~~ |
 | 11 | Parallel-experimentation demo: ≥2 sandboxes, differing strategies | agent | Both run; the discarded one is shown as discarded |
 | 12 | Security sweep of agent-generated integration code, in-sandbox | agent | Runs clean inside the sandbox, never on a host |
 | ~~13~~ | ~~E2E run: real triggers, no mocks in the happy path~~ — **DONE 2026-08-14 (PR 584b876)** | agent | ~~`scripts/e2e.py` — 12 checks green against real Daytona (sandbox 35f23fb7)~~ |
-| 14 | Snapshot the green build; use as the demo base | agent | Snapshot restores to a working app |
-| 15 | Deploy; capture the hosted URL | agent | URL loads for someone outside the sandbox |
+| ~~14~~ | ~~Snapshot the green build; use as the demo base~~ — **DONE 2026-08-14 (#2)** | agent | ~~Snapshot `ledgerline-b312e26-230625`~~ |
+| ~~15~~ | ~~Deploy; capture the hosted URL~~ — **DONE 2026-08-14 (#2)** | agent | ~~Daytona deploy + permanent GitHub Pages link; 3 routes smoke-checked from outside~~ |
 | 16 | Demo: live walkthrough or 2–3 min video **from the Daytona environment** | owner | Recorded/rehearsed, opens with the problem |
 | 17 | Submission: post to **RocketRide Discord `#showcase`** with the GitHub link; include URL · demo · team details · problem overview | owner | Posted before the 19:00 stop; all four PDF §6 fields present |
-| 18 | Repo README carries the pitch: problem, prototype URL, demo link, team — the GitHub link *is* the submission | agent | A judge opening the repo cold understands the problem and can reach the live app |
+| 18 | Repo README carries the pitch — **URLs + screenshots shipped**; still needs the Forge project link, demo video and team name | owner | The three remaining TODO fields are filled |
 | 19 | Confirm exact submission cut-off + demo slot at the mentor table | owner | Time known and D5 applied against it |
 | 20 | Join RocketRide Discord (credits + support + `#showcase`) | owner | Able to post in `#showcase` |
 
@@ -207,6 +207,12 @@ Proceed on the default unattended; the owner overrides at the Phase B checkpoint
 - **No public Forge API was found.** Searches returned only unrelated products (Atlassian
   Forge, getforge.com, SourceForge). Even if one exists, calling it undercuts the 30% —
   Forge must be where you *develop*, not a service you consume.
+- **A deployed instance cannot execute work orders.** Daytona blocks sandbox-to-sandbox
+  toolbox traffic on this account tier — *"Network access is restricted and cannot be
+  overridden at the sandbox level"*. The nested sandbox is created; its `code_run`
+  connection is reset. Demo the full loop from outside a sandbox.
+- **`GET /sandbox` returns an empty list** for this key even while a sandbox is running.
+  Verify by `GET /sandbox/{id}`, never by list — the dashboard may look empty too.
 - **Do not repeat vendor stats as fact.** Opsera's 66% / 83% / "zero architectural drift" are
   marketing. The defensible numbers are the two re-verified at source: Parseur (>9 hrs/week,
   $28,500/employee/yr) and IFOL (66% hand-keying, 63% >10 hrs/week) — both

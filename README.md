@@ -13,9 +13,64 @@ Built on **[SoftwareForge](https://softwareforge.ai/)** · Runs on **[Daytona](h
 
 | | |
 |---|---|
-| **Live prototype** | _`<!-- TODO: hosted URL -->`_ |
+| **Screens (permanent)** | <https://qte77.github.io/2026-08-14-SF-AWS_EnterpriseHack/> |
+| **Live app on Daytona** | <https://8000-8cff584c-c83c-45cb-a1c8-8b8767705f72.daytonaproxy01.net> |
+| **SoftwareForge spec** | artifact `90bd0b04-21ba-4674-86d3-f40a2e3a8a1e` — _`<!-- TODO: owner, paste the shareable Forge project URL -->`_ |
 | **Demo video** | _`<!-- TODO: 2–3 min walkthrough, recorded from the Daytona environment -->`_ |
 | **Team** | _`<!-- TODO: team name + members -->`_ |
+
+The Pages link is permanent; the Daytona URL lives only as long as its sandbox
+(`8cff584c-c83c-45cb-a1c8-8b8767705f72`, snapshot `ledgerline-b312e26-230625`). Redeploy with
+`uv run python scripts/deploy.py` — Pages rebuilds against the new URL automatically.
+
+> **Where the full loop runs.** The hosted instance serves the UI, the API and the
+> audit trail, but it cannot *execute* work orders: Daytona rejects
+> sandbox-to-sandbox toolbox traffic on this account tier — *"Network access is
+> restricted and cannot be overridden at the sandbox level"*
+> ([network limits](https://www.daytona.io/docs/en/network-limits/#tier-based-network-restrictions)).
+> The nested sandbox is created; its `code_run` connection is then reset. Run
+> Ledgerline **outside** a sandbox and the whole loop works — `scripts/e2e.py`
+> passes 14/14 there against real Daytona sandboxes.
+
+<!-- markdownlint-disable MD033 -->
+<details>
+<summary><b>Screenshots</b> — the audit trail tracing a written record back to the human who authorised it, the published screens, and the live deploy</summary>
+
+### Audit trail — the governance property, on screen
+
+Chain verified, and one record walked back: **record → authorising order → approver
+→ timestamp → sandbox → the code that ran**. Every entry carries its own hash and
+its predecessor's.
+
+![Ledgerline audit trail: SHA-256 chain verified, a record traced back through its
+authorising order to the sandbox and the code that executed](docs/screenshots/audit-trail-desktop.png)
+
+### Same screen, mobile
+
+![The audit trail at a 390px viewport](docs/screenshots/audit-trail-mobile.png)
+
+### Published screens (GitHub Pages)
+
+![The Ledgerline Pages site listing all eight Forge-designed screens](docs/screenshots/pages-landing.png)
+
+### Pages talking to the live Daytona deploy
+
+The published audit screen reading the API on a different origin — proof the
+`?api=` wiring and CORS work end to end.
+
+![The published audit trail rendering live entries fetched cross-origin from the
+Daytona deploy](docs/screenshots/pages-audit-trail.png)
+
+### The app served from Daytona
+
+![The Ledgerline index served from the Daytona sandbox](docs/screenshots/daytona-hosted.png)
+
+Screenshots are captured by [`scripts/ui_e2e.py`](scripts/ui_e2e.py) (local, in-repo)
+and by [polyfetch-scrape](https://github.com/qte77/polyfetch-scrape) for the hosted
+pages.
+
+</details>
+<!-- markdownlint-enable MD033 -->
 
 ---
 
@@ -161,6 +216,7 @@ creates a real Daytona sandbox per authorised work order and destroys it after.
 | `src/ledgerline/app.py` | The agent: detection, derivation, authorisation, sandboxed execution, audit |
 | `ui/` | The eight Forge-designed screens, extracted from `UI_Design.md` |
 | `scripts/e2e.py` | The eight success criteria as executable checks |
+| `daytona_results/` | What was deployed, where, and from which commit |
 | `assets/` | Problem statement |
 
 ---
