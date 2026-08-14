@@ -4,6 +4,27 @@
 **Event:** 2026-08-14, San Francisco · one-day build sprint · teams ≤4
 **Mandated stack:** SoftwareForge.ai (Forge) for development · Daytona for run/test/deploy
 
+### Logistics — from the Luma listing ([ev9ndfke](https://luma.com/ev9ndfke?tk=HDHAnx))
+
+| | |
+|---|---|
+| **Hours** | **09:30 – 19:00** (PT inferred; the listing does not state a timezone) |
+| **Venue** | San Francisco — exact address released to registered guests only |
+| **Registration** | **Approval required** — "Request to Join"; ~300 registered |
+| **Hosts** | Devnovate (presenter) · AWS Builder Loft · RocketRide · Aviral · Javier Garza · Mansi More |
+| **Submission** | **RocketRide Discord `#showcase` channel, with GitHub links** |
+| **Judging** | "Live project demos to judges and industry experts" — no per-slot times published |
+| **Prizes** | "Exciting prizes and sponsor awards" — unspecified |
+| **Support** | RocketRide Discord (credits + support) |
+
+> **No explicit submission deadline is published.** The hard stop is the 19:00 event end, and
+> live demos happen before it — so treat late afternoon as the real cut-off and confirm the
+> exact time at the mentor table. This drives **D5** (what gets cut).
+>
+> **The GitHub repo is the submission artifact.** Submission is by GitHub link, so repo
+> hygiene — README, working prototype URL, problem overview — is scored surface, not
+> housekeeping.
+
 > **The event is TODAY.** This is a same-day arc, not a multi-session one. The usual
 > "front-load Phase A, batch owner gates later" shape is **inverted**: the access gates in
 > Phase 0 block everything and must clear first. Treat elapsed hours as the scarce resource.
@@ -142,7 +163,10 @@ never re-list WHAT. Gate: `agent` (unattended) · `owner` (human) · `data` (nee
 | 14 | Snapshot the green build; use as the demo base | agent | Snapshot restores to a working app |
 | 15 | Deploy; capture the hosted URL | agent | URL loads for someone outside the sandbox |
 | 16 | Demo: live walkthrough or 2–3 min video **from the Daytona environment** | owner | Recorded/rehearsed, opens with the problem |
-| 17 | Submission: URL · demo · team details · problem overview | owner | All four PDF §6 fields supplied |
+| 17 | Submission: post to **RocketRide Discord `#showcase`** with the GitHub link; include URL · demo · team details · problem overview | owner | Posted before the 19:00 stop; all four PDF §6 fields present |
+| 18 | Repo README carries the pitch: problem, prototype URL, demo link, team — the GitHub link *is* the submission | agent | A judge opening the repo cold understands the problem and can reach the live app |
+| 19 | Confirm exact submission cut-off + demo slot at the mentor table | owner | Time known and D5 applied against it |
+| 20 | Join RocketRide Discord (credits + support + `#showcase`) | owner | Able to post in `#showcase` |
 
 ---
 
