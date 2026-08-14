@@ -37,16 +37,14 @@ Read these instead of re-deriving context.
 | `docs/estate-correlation.md` | Ingest digest; §4 stage-by-stage mapping; §5 criteria mapping; Forge/Daytona provenance caveats |
 | `docs/problem-shortlist.md` | Ranked candidates, evidence with URLs, source-type labels, what changed from the superseded draft |
 
-### Local — estate (read-only reference blueprints)
+### Local — estate
 
-| Path | Why it matters here |
-|---|---|
-| `/workspaces/polyforge-orchestrator/README.md` | Presets (`validate`, `security-all`, `security-pr`), parallel-agent model, devcontainer-lifecycle replay — the blueprint for parallel sandboxes + gate runs |
-| `/workspaces/polyforge-orchestrator/scripts/cc-parallel.sh` | The fan-out entry point being re-derived as parallel Daytona sandboxes |
-| `/workspaces/polyforge-orchestrator/config/repos.conf`, `config/contributions.json` | Config-driven task registry — shape to mirror for a governed action catalogue |
-| `/workspaces/qte77/qte77/docs/architecture.md` | Authority chain (META/KERNEL/MECHANISM/STATE/CONSUMERS) — the governance model being re-implemented on Forge |
-| `/workspaces/qte77/qte77/docs/goals.md`, `goals.json`, `STATUS.md` | Eval-gate + rollup design. `goals.json` is **empty by design**; rails are dormant-but-ready |
-| `/workspaces/qte77/qte77/docs/operating-model.md` | Steer-top/trace-bottom model and its adversarial de-risking |
+**Not used.** `polyforge-orchestrator` and `qte77/qte77` are **out of scope for this build**
+(owner decision, 2026-08-14). Do not read, copy, import, or depend on them. This project
+stands alone on Forge + Daytona.
+
+`docs/estate-correlation.md` remains as the record of the ingest analysis that was
+requested at the outset; it is **analysis, not a build input**.
 
 ### External
 
@@ -97,13 +95,13 @@ Every propagation the agent proposes is a **Work Order**: derived from the spec,
 human, authorised, then executed in the sandbox, then recorded. This is qte77's
 eval-gate-before-work re-implemented on Forge primitives — *not* pointed at.
 
-### Estate leverage (re-implemented, never imported)
+### Platform-native patterns (built here, from nothing)
 
-- `polyforge` parallel fan-out → parallel Daytona sandboxes trying different sync strategies
-  (PDF: *Parallel Experimentation*).
-- `--preset security-pr` posture (diff-scoped, untrusted inbound) → the correct stance toward
-  agent-generated integration code.
-- qte77 eval-gate → no propagation without its check passing.
+- **Parallel experimentation** — multiple Daytona sandboxes trying different sync strategies
+  side-by-side, discarding the losers at zero cleanup cost (PDF §2b).
+- **Untrusted-inbound posture** — agent-generated integration code is treated as untrusted:
+  it executes only in a sandbox created for its authorised order, never in-process.
+- **Gate-before-write** — no propagation occurs until its work order is authorised.
 
 ---
 
@@ -115,7 +113,7 @@ never re-list WHAT. Gate: `agent` (unattended) · `owner` (human) · `data` (nee
 | # | Item | Gate | Done when |
 |---|---|---|---|
 | ~~1~~ | ~~Forge account created, platform access confirmed via `hackathon.softwareforge.ai`~~ — **DONE 2026-08-14** | owner | ~~Logged in; can create a project~~ |
-| 2 | Daytona account + API key; prove a sandbox spins up | owner | `daytona.create()` returns a live sandbox from a scratch script |
+| ~~2~~ | ~~Daytona account + API key; prove a sandbox spins up~~ — **DONE 2026-08-14** (key in `.env`; sandbox created, ran code, deleted) | owner | ~~`daytona.create()` returns a live sandbox from a scratch script~~ |
 | 3 | Team registered (≤4) and name recorded | owner | Submission fields answerable |
 | 4 | **Verify Work Orders are user-exposed in Forge**; verify whether a Forge API exists | owner | Confirmed in-product, or Decision D1 default applied |
 | 5 | Stand up the Daytona environment **before** building in Forge (PDF §7) | agent | Sandbox running with the runtime the build needs |
@@ -160,9 +158,9 @@ Proceed on the default unattended; the owner overrides at the Phase B checkpoint
 
 ## 7. Watch-outs
 
-- **The 30% is the criterion the estate cannot buy.** Importing polyforge into a sandbox is
-  exactly the "one-off import" the PDF warns judges to look for. Every estate pattern must be
-  re-implemented on-platform.
+- **Build it on-platform, from nothing.** The estate is out of scope; importing prior work
+  into a sandbox is exactly the "one-off import" the PDF warns judges to look for. Every
+  pattern above is built here, on Forge + Daytona.
 - **Timestamps matter.** Judges look for both platforms used *throughout* the build, not
   clustered at the end. Commit spec revisions and sandbox runs as you go.
 - **Forge's Living Specs / Work Orders / ForgeScore are marketing-sourced.** The app docs

@@ -5,6 +5,9 @@
 *.pem
 *.key
 
+# Harness scaffolding — local only
+MEMORY.md
+
 # Keep the template
 !.env.example
 

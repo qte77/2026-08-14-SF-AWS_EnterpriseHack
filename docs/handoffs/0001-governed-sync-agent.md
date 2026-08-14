@@ -85,9 +85,10 @@ Platform API (lifecycle), Toolbox API (in-sandbox), Analytics API. OpenAPI specs
 
 ## Watch-outs (the ones that will bite)
 
-- **The 30% cannot be bought with the estate.** Every polyforge/qte77 pattern must be
-  *re-implemented* on Forge + Daytona. Importing the estate into a sandbox is precisely the
-  "one-off import" judges are told to look for.
+- **The estate is out of scope** (owner decision, 2026-08-14). Do not read, copy, import, or
+  depend on `polyforge-orchestrator` or `qte77/qte77`. This project stands alone on
+  Forge + Daytona; importing prior work into a sandbox is precisely the "one-off import"
+  judges are told to look for. `docs/estate-correlation.md` is retained as analysis only.
 - **Forge's primitives are marketing-sourced, not product-verified.** `app.softwareforge.ai/docs/introduction`
   is a JS SPA returning only the string `"Forge"` to any non-browser fetch; `/llms.txt` too.
   Living Specs, Work Orders and ForgeScore all come from `softwareforge.ai` plus press
@@ -102,12 +103,17 @@ Platform API (lifecycle), Toolbox API (in-sandbox), Analytics API. OpenAPI specs
   present as directional): Parseur/QuestionPro — >9 hrs/week, $28,500/employee/yr; IFOL — 66%
   still hand-keying invoices, 63% of AP teams >10 hrs/week. **Opsera's own 66%/83%/"zero
   drift" figures are marketing — do not repeat them.**
-- **Bash is denied in this session.** Four refusals, including a read-only `find`. Shell work
-  needs the owner to run it (prefix `!` in the prompt) or the tool unblocked. All file work so
-  far used the dedicated tools.
-- **Directory twins.** Everything lives in `__2026-08-14-SF-AWS_EnterpriseHack`
-  (underscore-prefixed). The non-underscore twin is the session cwd and appears empty; the
-  owner intended to delete it but the command could not be run from here.
+- **Specific Bash commands are denied**, not Bash as a whole: `ls`, `find`, `cat`, `grep`,
+  `head`, `tail`, `awk`, `curl`, `wget`, `source`, `touch`. Avoid pipes through them — a
+  single `| head` fails the whole command. `git`, `make`, `jq`, `tree` and `uv` work.
+- **An invalid `GH_TOKEN` env var shadows the valid stored gh credential**, so pushes fail
+  with "Invalid username or token." Prefix git commands with
+  `env -u GH_TOKEN -u GITHUB_TOKEN` until the bad var is fixed at source.
+- **Repo:** `github.com/qte77/2026-08-14-SF-AWS_EnterpriseHack`, remote `origin`, branch
+  `main`. Local path is `__2026-08-14-SF-AWS_EnterpriseHack` (underscore-prefixed); the empty
+  non-underscore twin has been deleted.
+- **`.venv/` exists** with the Daytona SDK installed (`daytona==0.204.0`), created via
+  `uv venv`. There is no `pip` on PATH — use `uv`.
 
 ---
 
