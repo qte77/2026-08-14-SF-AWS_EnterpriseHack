@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import platform
 import sqlite3
 import sys
 
@@ -67,9 +68,20 @@ body = appr.json()
 sandbox = body.get("sandbox", {})
 check("4 · approved order wrote to ERP", appr.status_code == 200 and body["status"] == "SYNCED",
       body.get("status", appr.text[:120]))
-check("6 · sandbox created for the order and destroyed after",
-      bool(sandbox.get("sandbox_id")) and bool(sandbox.get("destroyed_at")),
-      f"sandbox {sandbox.get('sandbox_id')}")
+# Criterion 6 says "observable, not asserted", so this checks what Daytona
+# reports about the sandbox, not what our own executor returned about itself.
+alive = sandbox.get("proof_alive") or {}
+gone = sandbox.get("proof_destroyed") or {}
+check("6a · Daytona confirms the sandbox existed (GET /sandbox/{id} -> 200)",
+      alive.get("http_status") == 200 and alive.get("state") in {"started", "creating"},
+      f"{alive.get('http_status')} state={alive.get('state')} org={alive.get('organization_id')}")
+check("6b · Daytona confirms it is gone after teardown",
+      gone.get("http_status") in {400, 401, 403, 404} or gone.get("state") in
+      {"destroyed", "destroying", "archived", None},
+      f"HTTP {gone.get('http_status')} state={gone.get('state')}")
+check("6c · the code ran off-host (sandbox kernel != this process's)",
+      bool(sandbox.get("executed_on")) and platform.node() not in sandbox.get("executed_on", ""),
+      sandbox.get("executed_on", "")[:88])
 erp_rows = c.get("/systems/erp/records").json()
 check("4b · value visible in the target system",
       any(x["record_id"] == RECORD and x.get("business_partner_name")

@@ -281,11 +281,48 @@ def generated_code(wo_id: str, target: str, record_id: str, payload: dict[str, A
 # Sandboxed execution — Daytona, one sandbox per authorised order
 # --------------------------------------------------------------------------
 
-def run_in_sandbox(code: str) -> dict[str, Any]:
+def _daytona_probe(sandbox_id: str) -> dict[str, Any]:
+    """Ask Daytona itself about a sandbox.
+
+    Criterion 6 requires the sandbox lifecycle to be *observable, not asserted*.
+    Trusting our own return value is self-referential, so both the live and the
+    torn-down state are read back from the Daytona API and stored in the audit
+    trail, where an auditor can check them against the vendor independently.
+
+    Note: this key is scoped to create/get/delete. `GET /sandbox` (list) and
+    `/users/me` return 401, so a *list* view will look empty even while a
+    sandbox is running. `GET /sandbox/{id}` is the authoritative check.
+    """
+    import httpx
+
+    url = f"{DAYTONA_API_URL.rstrip('/')}/sandbox/{sandbox_id}"
+    try:
+        r = httpx.get(url, headers={"Authorization": f"Bearer {DAYTONA_API_KEY}"},
+                      timeout=20)
+        body = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+        return {
+            "endpoint": f"GET /sandbox/{sandbox_id}",
+            "http_status": r.status_code,
+            "state": body.get("state"),
+            "organization_id": body.get("organizationId"),
+            "target": body.get("target"),
+            "snapshot": body.get("snapshot"),
+        }
+    except Exception as exc:  # noqa: BLE001 - the probe must never break execution
+        return {"endpoint": f"GET /sandbox/{sandbox_id}", "error": f"{type(exc).__name__}: {exc}"}
+
+
+def run_in_sandbox(code: str, hold_seconds: int = 0) -> dict[str, Any]:
     """Create a sandbox, run the authorised code, destroy the sandbox.
 
     Only reachable after a human authorises the work order.
+
+    `hold_seconds` keeps the sandbox alive after the run so it can be watched in
+    the Daytona dashboard during a demo. It changes nothing about the isolation
+    guarantee — the sandbox is still destroyed, just later.
     """
+    import time
+
     from daytona import Daytona, DaytonaConfig
 
     config = DaytonaConfig(api_key=DAYTONA_API_KEY, api_url=DAYTONA_API_URL)
@@ -294,25 +331,37 @@ def run_in_sandbox(code: str) -> dict[str, Any]:
     sandbox = daytona.create()
     sandbox_id = getattr(sandbox, "id", None) or str(sandbox)
     created_at = now()
+    alive_proof = _daytona_probe(sandbox_id)
+
+    run: dict[str, Any] = {"sandbox_id": sandbox_id, "created_at": created_at,
+                           "proof_alive": alive_proof}
     try:
         response = sandbox.process.code_run(code)
         exit_code = getattr(response, "exit_code", 0)
         output = getattr(response, "result", "") or ""
+        # Independent evidence the code ran off-host: the sandbox reports its own
+        # kernel and hostname, which differ from this process's.
+        host = sandbox.process.code_run(
+            "import platform, os; print(platform.node(), '|', platform.platform(), '|', os.getcwd())"
+        )
+        run["executed_on"] = (getattr(host, "result", "") or "").strip()
         if exit_code != 0:
-            return {"sandbox_id": sandbox_id, "created_at": created_at,
-                    "destroyed_at": None, "ok": False,
-                    "error": f"exit {exit_code}: {output}", "stdout": output}
+            run.update({"ok": False, "error": f"exit {exit_code}: {output}", "stdout": output})
+            return run
         result = None
         for line in output.splitlines():
             if line.startswith("LEDGERLINE_RESULT "):
                 result = json.loads(line[len("LEDGERLINE_RESULT "):])
-        return {"sandbox_id": sandbox_id, "created_at": created_at, "ok": True,
-                "result": result, "stdout": output}
+        run.update({"ok": True, "result": result, "stdout": output})
+        return run
     finally:
+        if hold_seconds:
+            time.sleep(hold_seconds)
         try:
             sandbox.delete()
-        except Exception:  # noqa: BLE001 - teardown must not mask the run result
-            pass
+            run["proof_destroyed"] = _daytona_probe(sandbox_id)
+        except Exception as exc:  # noqa: BLE001 - teardown must not mask the run result
+            run["teardown_error"] = f"{type(exc).__name__}: {exc}"
 
 
 # --------------------------------------------------------------------------
@@ -492,7 +541,7 @@ async def approve(wo_id: str, request: Request):
 
     # Execution happens outside the app process, in a sandbox for this order only.
     try:
-        run = run_in_sandbox(code)
+        run = run_in_sandbox(code, hold_seconds=int(body.get("hold_seconds", 0)))
     except Exception as exc:  # noqa: BLE001 - surfaced to the reviewer and the audit trail
         run = {"ok": False, "error": f"{type(exc).__name__}: {exc}", "sandbox_id": None}
 
@@ -501,7 +550,9 @@ async def approve(wo_id: str, request: Request):
         conn.execute("UPDATE work_orders SET sandbox_id = ?, sandbox_log = ? WHERE id = ?",
                      (run.get("sandbox_id"), json.dumps(run), wo_id))
         audit(conn, "sandbox.created", "agent",
-              {"sandbox_id": run.get("sandbox_id"), "at": run.get("created_at")}, wo_id)
+              {"sandbox_id": run.get("sandbox_id"), "at": run.get("created_at"),
+               "daytona_says": run.get("proof_alive"),
+               "executed_on": run.get("executed_on")}, wo_id)
 
         if not run.get("ok"):
             conn.execute("UPDATE work_orders SET status='FAILED' WHERE id = ?", (wo_id,))
@@ -513,7 +564,8 @@ async def approve(wo_id: str, request: Request):
                                 content={"work_order": wo_id, "status": "FAILED",
                                          "sandbox": run})
         audit(conn, "sandbox.destroyed", "agent",
-              {"sandbox_id": run.get("sandbox_id"), "at": run["destroyed_at"]}, wo_id)
+              {"sandbox_id": run.get("sandbox_id"), "at": run["destroyed_at"],
+               "daytona_says": run.get("proof_destroyed")}, wo_id)
         conn.commit()
 
     # The sandbox produced the payload; the write is carried out under the token
