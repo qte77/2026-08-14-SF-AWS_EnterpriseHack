@@ -3,6 +3,14 @@
 **Enterprise data gets typed three times. Ledgerline types it once — and no write happens
 until a human authorises it.**
 
+> Enterprises re-key the same customer record into three systems because the automation
+> that would fix it writes autonomously — and no finance or compliance owner grants an
+> autonomous process write access to a system of record without knowing who approved what.
+> Ledgerline makes every proposed write a **work order** that a human authorises first,
+> executes it in a disposable sandbox, and records the unbroken chain from the original
+> edit to the final write — turning cross-system sync from *technically possible* into
+> *actually adoptable*.
+
 Built for the **[SF Enterprise Hackathon](https://luma.com/ev9ndfke)**, 2026-08-14 ·
 Track: **Workflow Automation**
 Built on **[SoftwareForge](https://softwareforge.ai/)** · Runs on **[Daytona](https://www.daytona.io/)**
