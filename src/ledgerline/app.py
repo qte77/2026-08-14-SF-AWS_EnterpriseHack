@@ -31,10 +31,9 @@ import os
 import pathlib
 import secrets
 import sqlite3
-import textwrap
 import uuid
 from contextlib import closing
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import FastAPI, Header, HTTPException, Request
@@ -168,7 +167,7 @@ def init_db() -> None:
 
 
 def now() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 def audit(conn: sqlite3.Connection, event: str, actor: str, detail: dict[str, Any],
