@@ -1,6 +1,7 @@
 [project]
 name = "ledgerline"
 version = "0.1.0"
+license = "Apache-2.0"
 description = "Governed cross-system sync agent — no write without an authorised work order"
 requires-python = ">=3.12"
 dependencies = [

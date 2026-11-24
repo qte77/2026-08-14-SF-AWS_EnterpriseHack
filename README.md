@@ -251,5 +251,4 @@ feature, not a limitation to be removed later.
 
 ## Licence
 
-See [LICENSE](LICENSE) if present; otherwise all rights reserved by the team pending
-selection.
+[Apache-2.0](LICENSE).
